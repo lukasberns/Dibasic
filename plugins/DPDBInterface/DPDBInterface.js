@@ -282,7 +282,7 @@ Class("DPDBInterface", DP, {
 			for (var i in ids) {
 				var id = ids[i];
 				if (self._data[id] !== undefined) {
-					data[i] = self._data[id];
+					data[id] = self._data[id];
 					waitingIds.shift();
 				}
 			}

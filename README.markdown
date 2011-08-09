@@ -12,7 +12,7 @@ Create an empty directory, which will hold all your Dibasic files and cd into it
 
 Then clone Dibasic into it:
 
-	git clone https://lukasberns@github.com/lukasberns/Dibasic.git
+	git clone https://github.com/lukasberns/Dibasic.git
 
 Next edit the `Dibasic.config-sample.php` file inside the newly created Dibasic folder and rename it to `Dibasic.config.php`. Now visit the admin folder in your web browser. It should give you the instruction to setup the database. During setup, Dibasic will create the following files and directories inside your admin folder:
 

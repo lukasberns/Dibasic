@@ -1,0 +1,16 @@
+.DPDataTemplatePager {
+	text-align: center;
+	padding: 4px;
+}
+
+.DPDataTemplatePager a {
+	border: 1px solid;
+	text-decoration: none;
+	padding: 3px 6px;
+	margin: 0.5em;
+}
+
+	.DPDataTemplatePager a:link, .DPDataTemplatePager a:visited { color: #888; }
+	.DPDataTemplatePager a:hover, .DPDataTemplatePager a:active { color: #555; }
+	
+	.DPDataTemplatePager a.selected { color: #111; }

@@ -1,0 +1,120 @@
+/****
+
+DPAddForm:
+Form to add new entries
+
+****/
+
+
+
+(function($) {
+
+var cachedValues, initialValues;
+
+var clss = DPAddForm = (function(def) {
+	this.definition = def;
+	
+	var self = this;
+	// init the form structure
+	this.formWrapper = $('<div id="DPAddForm"></div>').hide().appendTo('body');
+	$('<form class="DPForm" method="post"></form>').appendTo(this.formWrapper);
+	
+}).inheritsFrom(DP);
+
+clss.prototype.widget = function() {
+	var self = this;
+	return this.addButton = $('<a href="#DPAddForm" class="button">Add</a>').fancybox({
+		hideOnContentClick: false,
+		callbackBeforeShow: function() {
+			self.initForm();
+			$('.reopenButton').fadeOut('normal', function() {
+				$(this).remove();
+			});
+		},
+		callbackBeforeClose: function() {
+			self.cacheValues();
+		}
+	});
+};
+
+clss.prototype.initForm = function() {
+	var self = this;
+	var form = $('#fancy_div .DPForm').eq(0);
+	
+	form.html('');
+	form.submit(function() {
+		self.submit();
+		return false;
+	});
+	var ul = $('<ul></ul>').appendTo(form);
+	for (var i = 0, col; col = Dibasic.columns[i]; i++) {
+		$('<li></li>').append(col.DI.widget()).appendTo(ul);
+	}
+	$('<li></li>').append('<input type="Submit" value="Add" class="button" />').appendTo(ul);
+	
+	form.find(':input:first').focus();
+	
+	initialValues = this.getValues();
+}
+
+clss.prototype.submit = function() {
+	var self = this;
+	Dibasic.DPDBInterface.insert(this.getValues(), function(data) {
+		for (var i in data) { data = data[i]; break; }
+		$.fn.fancybox.close();
+		$('#DPAddForm').trigger('added.db', data);
+	})
+};
+
+clss.prototype.cacheValues = function() {
+	var self = this;
+	var values = this.getValues();
+	
+	if (equals(values, initialValues)) {
+		if (!cachedValues) {
+			return;
+		}
+	}
+	else {
+		cachedValues = values;
+	}
+	
+	this.reopenButton = $('<a href="#DPAddForm" class="button reopenButton">Reopen</a>').fancybox({
+		hideOnContentClick: false,
+		callbackBeforeShow: function() {
+			self.initForm();
+			self.setValues(cachedValues);
+			$('.reopenButton').fadeOut('normal', function() {
+				$(this).remove();
+			});
+		},
+		callbackBeforeClose: function() {
+			self.cacheValues();
+		}
+	}).hide().insertAfter(this.addButton).fadeIn();
+};
+
+clss.prototype.emptyCache = function() {
+	cachedValues = null;
+	$('.reopenButton').fadeOut('normal', function() {
+		$(this).remove();
+	});
+};
+
+clss.prototype.getValues = function() {
+	var values = {};
+	for (var i = 0, col; col = Dibasic.columns[i]; i++) {
+		values[col.name] = col.DI.val();
+	}
+	return values;
+};
+
+clss.prototype.setValues = function(values) {
+	if (typeof values != 'object') { return; }
+	for (var i = 0, col; col = Dibasic.columns[i]; i++) {
+		col.DI.val(values[col.name]);
+	}
+};
+
+
+})(jQuery);

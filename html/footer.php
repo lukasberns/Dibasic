@@ -1,0 +1,3 @@
+<?=Dibasic::getJavascripts()?>
+</body>
+</html>

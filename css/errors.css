@@ -1,0 +1,98 @@
+label .error {
+	color: red;
+	display: block;
+	position: absolute;
+	border-bottom: 1px solid #eee;
+}
+
+input.error {
+	outline: red 5px auto;
+	outline-offset: -2px;
+}
+
+	input.error:focus {
+		outline-color: purple;
+	}
+
+{{{{{{{
+
+label.error {
+	display: inline-block;
+	color: white;
+	background: #f50000;
+	background: -webkit-gradient(linear, left top, left bottom, from(red), to(#e00));
+	
+	font-size: 14px;
+	font-family: Helvetica;
+	line-height: 16px;
+	@height: 16px;
+	padding: 3px 10px 3px 6px;
+	border: 2px solid white;
+	-webkit-box-shadow: -2px 0 10px rgba(0,0,0,0.5);
+	position: relative;
+	left: 12px;
+	margin: -3px -100% -3px 0; /* TODO: This percentage is relative to the containing element, but should be to itself */
+	
+ 	/* this arrow should take up no space, but go with the document flow */
+	
+	-webkit-border-radius: 0 5px 5px 0;
+	@-webkit-animation-name: hover;
+	-webkit-animation-duration: 3s;
+	@-webkit-animation-direction: normal;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-iteration-count: infinite;
+}
+
+label.error::before {
+	content: '';
+	display: block;
+	border: 12px solid transparent;
+	position: absolute;
+	top: -1px;
+	border-right-color: white;
+	left: -26px;
+}
+
+label.error::after {
+	content: '';
+	display: block;
+	border: 12px solid transparent;
+	position: absolute;
+	border-right-color: #f50000;
+	border-right-color: -webkit-gradient(linear, left top, left bottom, from(red), to(#e00));
+	left: -22px;
+	border-width: 11px;
+	top: 0px;
+}
+
+/* Animation */
+
+@-webkit-keyframes hover {
+ 0% {
+   -webkit-transform: translate(0px, 0px);
+ }
+ 12.5% {
+   -webkit-transform: translate(0.9px, -2.1px);
+ }
+ 25% {
+   -webkit-transform: translate(3px, -3px);
+ }
+ 37.5% {
+   -webkit-transform: translate(5.1px, -2.1px);
+ }
+ 50% {
+   -webkit-transform: translate(6px, 0px);
+ }
+ 62.5% {
+   -webkit-transform: translate(5.1px, 2.1px);
+ }
+ 75% {
+   -webkit-transform: translate(3px, 3px);
+ }
+ 87.5% {
+   -webkit-transform: translate(0.9px, 2.1px);
+ }
+ 100% {
+   -webkit-transform: translate(0px, 0px);
+ }
+}

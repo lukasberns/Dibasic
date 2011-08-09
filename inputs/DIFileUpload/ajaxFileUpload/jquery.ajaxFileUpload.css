@@ -1,0 +1,36 @@
+.ajaxFileUploadProgressContainer {
+	width: 150px;
+	border: 1px solid transparent;
+	position: relative;
+}
+	
+	.ajaxFileUploadProgressContainer.uploading {
+		border-color: #aaa;
+	}
+
+.ajaxFileUploadProgressBar {
+	position: absolute;
+	background: #acf;
+	height: 100%;
+}
+
+.ajaxFileUploadProgressContainer input.ajaxFileUploadFileName {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	width: 96%;
+	padding: 2%;
+	position: relative;
+	background: transparent;
+}
+
+a.ajaxFileUploadLink {
+	text-decoration: none;
+	color: #37d;
+	font-size: 10px;
+	border: 0;
+	margin: 3px;
+}
+
+	a.ajaxFileUploadLink:link, a.ajaxFileUploadLink:visited { border-bottom: 0; }
+	a.ajaxFileUploadLink:hover, a.ajaxFileUploadLink:active { border-bottom: 1px solid; }

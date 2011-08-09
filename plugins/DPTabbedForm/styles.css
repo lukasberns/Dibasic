@@ -1,0 +1,7 @@
+.ui-tabs {
+	font-size: 1em !important;
+}
+
+.DPTabbedFormErrorMarkedTab {
+	border-color: red !important;
+}

@@ -1,0 +1,3 @@
+#ui-datepicker-div {
+	z-index: 1200; /* so that it isn’t hidden by fancy box (z-index: 1101) */
+}

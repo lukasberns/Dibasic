@@ -1,0 +1,67 @@
+#DPNavigation {
+	background: #eee;
+	width: 100%;
+	padding: 10px 10px;
+	margin: -10px -10px 10px;
+	border-bottom: 1px solid #ccc;
+}
+
+#DPNavigation li {
+	position: relative;
+	display: inline;
+	.float: left;
+	margin-right: 1em;
+	padding: 10px;
+	color: #777;
+}
+
+#DPNavigation li:hover {
+	color: black;
+}
+
+#DPNavigation a, #DPNavigation span {
+	text-decoration: none;
+	padding: 3px 3px;
+}
+
+#DPNavigation a:link, #DPNavigation a:visited {
+	color: #777;
+	border-bottom: none;
+}
+
+#DPNavigation a:hover, #DPNavigation a:active, #DPNavigation a:focus {
+	color: black;
+	border-bottom: 1px solid #666;
+}
+
+#DPNavigation a.selected, #DPNavigation .hasSelected .group-title {
+	color: black;
+	border-top: 1px solid #666;
+}
+
+#DPNavigation .selected:hover, #DPNavigation .selected:active, #DPNavigation .selected:focus {
+	border-bottom: none;
+}
+
+#DPNavigation ul {
+	position: absolute;
+	margin-top: 0.5em;
+	width: 200px;
+	background: #eee;
+	border: solid #ccc;
+	border-width: 0 1px 1px;
+	display: none;
+}
+
+#DPNavigation ul li {
+	display: block;
+}
+
+#DPNavigation ul .selected {
+	border-top: none;
+	border-bottom: 1px solid #666;
+}
+
+#DPNavigation ul .selected:hover, #DPNavigation ul .selected:active, #DPNavigation ul .selected:focus {
+	border-bottom: 1px solid #666;
+}

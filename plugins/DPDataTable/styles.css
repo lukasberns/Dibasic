@@ -1,0 +1,26 @@
+#DPDataTable {
+	table-layout: fixed;
+	margin: 10px 0;
+	width: 100%;
+}
+
+#DPDataTable th {
+	background: #eee;
+	text-align: center;
+}
+
+#DPDataTable th, #DPDataTable td {
+	border: 1px solid #ccc;
+	padding: 5px;
+	overflow: hidden;
+	overflow: ellipsis;
+}
+
+#DPDataTable .controlsColumn {
+	text-align: center;
+	width: 12.5em;
+}
+
+#DPDataTable tbody tr:even {
+	background: #f8f8f8;
+}

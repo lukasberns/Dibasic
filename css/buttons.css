@@ -1,0 +1,115 @@
+/* Taken from: http://www.zurb.com/playground/google-buttons */
+
+button, a.button, input[type=button], input[type=submit] {
+	font-size: 1em;
+	padding: .42em 1em;
+	-webkit-border-radius: 1.25em;
+	-moz-border-radius: 1.25em;
+	border-radius: 1.25em;
+	border: solid 1px rgb(153, 153, 153);
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(255, 255, 255)), to(#ddd));
+	background: -moz-linear-gradient(top, white, #ddd);
+	color: #333;
+	text-decoration: none;
+	cursor: pointer;
+	display: inline-block;
+	text-align: center;
+	text-shadow: 0px 1px 1px rgba(255,255,255,1);
+	line-height: 1;
+}
+
+button:hover,
+a.button:hover,
+input[type=button]:hover,
+input[type=submit]:hover,
+button.hover,
+a.button.hover,
+input[type=button].hover,
+input[type=submit].hover
+{
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(245, 245, 245)), to(rgb(215, 215, 215)));
+	background: -moz-linear-gradient(top, rgb(245, 245, 245), rgb(215, 215, 215));
+}
+
+button:active,
+a.button:active,
+input[type=button]:active,
+input[type=submit]:active,
+button.active,
+a.button.active,
+input[type=button].active,
+input[type=submit].active
+{
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(200, 200, 200)), to(rgb(240, 240, 240)));
+	background: -moz-linear-gradient(top, rgb(200, 200, 200), rgb(245, 245, 245));
+}
+
+button:disabled,
+input[type=button]:disabled,
+input[type=submit]:disabled,
+button.disabled,
+a.button.disabled,
+input[type=button].disabled,
+input[type=submit].disabled
+{
+	color: #777;
+}
+
+button:focus,
+a.button:focus,
+input[type=button]:focus,
+input[type=submit]:focus,
+button.focus,
+a.button.focus,
+input[type=button].focus,
+input[type=submit].focus
+{
+	border: solid 1px rgb(135, 135, 135);
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(240, 240, 240)), to(rgb(200, 200, 200)));
+	background: -moz-linear-gradient(top, rgb(240, 240, 240), rgb(200, 200, 200));
+	outline: 0;
+	-webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+	z-index: 1;
+	position: relative;
+}
+
+/* Segmented controls */
+
+.segmented {
+	display: inline-block;
+	margin: 0 1ex;
+	vertical-align: -30%; /* this lowers the buttons, so that the text is aligned about the same as standard text */
+}
+
+.segmented > * {
+	float: left;
+}
+
+.segmented > :not(:last-child):not(.ignore), .segmented .left {
+	-webkit-border-top-right-radius: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+	-moz-border-radius-topright: 0px;
+	-moz-border-radius-bottomright: 0px;
+	border-top-right-radius: 0px;
+	border-bottom-right-radius: 0px;
+	margin-right: 0;
+	padding-right: 0.7em;
+	border-right: none;
+}
+
+	.segmented :focus + * {
+		border-left: none;
+	}
+
+.segmented > :not(:first-child):not(.ignore), .segmented .right {
+	-webkit-border-top-left-radius: 0px;
+	-webkit-border-bottom-left-radius: 0px;
+	-moz-border-radius-topleft: 0px;
+	-moz-border-radius-bottomleft: 0px;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	margin-left: 0;
+	padding-left: 0.7em;
+}

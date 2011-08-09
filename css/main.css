@@ -1,0 +1,66 @@
+/****
+vars {
+	$inputWidth = 300px;
+	$inputPadding = 5px;
+	$inputMargin = 5px;
+	$labelWidth = 100px;
+}
+***/
+
+body {
+	font-size: 12px;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+#Dibasic {
+	margin: 10px;
+}
+
+/* .DPForm */
+
+.DPForm {
+	width: 552px;
+	margin: 20px; /* this hides the horizontal scrollbar in fancybox */
+}
+
+.DPForm li {
+	padding: 5px 0;
+}
+
+.DPForm input[type=text], .DPForm input[type=password], .DPForm textarea {
+	width: 68%;
+	padding: 5px;
+	-webkit-border-radius: 3px;
+	border: 1px solid #ccc;
+}
+
+.DPForm .input-spaced, .DPForm input[type=text], .DPForm input[type=password], .DPForm textarea {
+	margin: 5px;
+	margin-left: 28%;
+}
+		
+.DPForm input[type=checkbox], .DPForm select {
+	margin: 5px;
+	margin-left: 28%;
+}
+
+.DPForm input[type=submit] {
+	margin-left: 10px;
+	margin-top: 20px;
+}
+
+.DPForm .input-title {
+	position: absolute;
+	display: block;
+	width: 20%;
+	padding: 6px;
+	margin: 5px;
+}
+
+.DPForm .input {
+	display: block;
+	margin: 5px;
+	margin-left: 28%;
+	padding: 6px;
+	width: 68%;
+}

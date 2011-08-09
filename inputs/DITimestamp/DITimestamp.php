@@ -7,6 +7,13 @@ class DITimestamp extends DI {
 	public $dataType = 'datetime';
 	public $setOnUpdate = true;
 	
+	public function init() {
+		$setOnUpdate = $this->getOption('setOnUpdate');
+		if ($setOnUpdate !== null) {
+			$this->setOnUpdate = $setOnUpdate;
+		}
+	}
+	
 	public function processData(&$data, $id = -1) {
 		// TODO: It would be much more eleagnt if we could use the MYSQL function CURRENT_TIMESTAMP here
 		if ($this->setOnUpdate || $id == -1) {

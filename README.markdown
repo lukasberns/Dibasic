@@ -80,7 +80,7 @@ Coming back to our blog editor, let's add our columns:
 	
 	$table->addColumn('title', 'Text', 'Title');
 	$table->addColumn('content', 'TextArea', 'Content');
-	$table->addColumn('date_posted', 'Timestamp');
+	$table->addColumn('date_posted', 'Timestamp', 'Date Posted', array( 'setOnUpdate' => false ));
 	
 	// ...
 

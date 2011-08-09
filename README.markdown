@@ -134,7 +134,7 @@ So the complete file will look like this:
 	
 	$table->addColumn('title', 'Text', 'Title');
 	$table->addColumn('content', 'TextArea', 'Content');
-	$table->addColumn('date_posted', 'Timestamp');
+	$table->addColumn('date_posted', 'Timestamp', 'Date Posted', array( 'setOnUpdate' => false ));
 	
 	$renderer = $table->setDataRenderer('DataTable');
 	$renderer->order('Date Posted', '-date_posted');

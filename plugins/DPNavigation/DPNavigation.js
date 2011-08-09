@@ -38,10 +38,10 @@ Class("DPNavigation", DP, {
 								$('<a href="#openMenu">'+i+' ▾</a>')
 									.addClass('group-title')
 									.click(function() {
-											var wasClosed = $(this).next('ul').is(':hidden')
+											var wasClosed = $(this).next('ul').is(':hidden');
 											self.container.find('ul').hide();
 											if (wasClosed) {
-												$(this).next('ul').show()
+												$(this).next('ul').show();
 											};
 											return false;
 										})

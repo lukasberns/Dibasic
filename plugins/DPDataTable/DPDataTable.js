@@ -43,8 +43,9 @@ Class("DPDataTable", DPDataTemplate, {
 			var columns = self.definition.columns;
 			
 			self.tbody.html('');
-			for (var id in data) {
-				var row = data[id];
+			for (var i in data) {
+				var row = data[i];
+				var id = row[Dibasic.key];
 				var tr = $('<tr/>');
 				for (var j in columns) {
 					var name = columns[j];

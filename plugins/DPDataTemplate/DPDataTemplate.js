@@ -156,11 +156,12 @@ Class("DPDataTemplate", DP, {
 				for (var rowI in data) {
 					window._row = data[rowI]; // raw data is accessible via _row.columnName
 					window.row = {};
-					var repeater = '<div id="DPDataTemplate-displayData-rowData-'+window._row[Dibasic.key]+'">' + repeat + '</div>';
+					var id = window._row[Dibasic.key];
+					var repeater = '<div id="DPDataTemplate-displayData-rowData-'+id+'">' + repeat + '</div>';
 					for (var i in window._row) {
 						window.row['_'+i] = Dibasic.columnWithName(i); // DI-object alias row._columnName
 						// data rendered according to corresponding DI-object (row.columnName)
-						window.row[i] = window.row['_'+i] ? window.row['_'+i].DI.render(window._row[i], rowI, data) : window._row[i];
+						window.row[i] = window.row['_'+i] ? window.row['_'+i].DI.render(window._row[i], id, data) : window._row[i];
 					}
 					process(repeater, temp);
 				}

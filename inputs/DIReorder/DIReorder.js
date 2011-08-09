@@ -56,7 +56,7 @@ Class("DIReorder", DI, {
 		
 		var foundSelected = before = after = false;
 		for (var i in allData) {
-			if (i == id) { foundSelected = true; }
+			if (allData[i][Dibasic.key] == id) { foundSelected = true; }
 			else if (!foundSelected) { before = true; }
 			else if (foundSelected) { after = true; }
 		}

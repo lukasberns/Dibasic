@@ -40,11 +40,23 @@ Class("DPDBInterface", DP, {
 				ids = [ids];
 			}
 		}
-	
-		i = 0;
+		
 		var missingIds = [], waitFor = [];
 		var data = {};
 	
+		var finish = function(data) {
+			// sort data, then call callback
+			if ($.isFunction(callback)) {
+				i = 0;
+				var sorted = [];
+				for (i in ids) {
+					sorted.push(data[ids[i]]);
+				}
+				callback(sorted);
+			}
+		}
+		
+		i = 0;
 		for (i in ids) {
 			var id = ids[i];
 			if (this._data[id] !== undefined) {
@@ -61,15 +73,13 @@ Class("DPDBInterface", DP, {
 		}
 	
 		if (missingIds.length == 0 && waitFor.length == 0) {
-			if ($.isFunction(callback)) {
-				callback(data);
-			}
+			finish(data);
 			return;
 		}
 		/* else: */
 		// get missing data
 	
-		var waiter = this._makeWaiter(missingIds.concat(waitFor), data, callback);
+		var waiter = this._makeWaiter(missingIds.concat(waitFor), data, finish);
 		this.observe(waiter, true);
 	
 		if (missingIds.length != 0) {
@@ -272,7 +282,7 @@ Class("DPDBInterface", DP, {
 			for (var i in ids) {
 				var id = ids[i];
 				if (self._data[id] !== undefined) {
-					data[id] = self._data[id];
+					data[i] = self._data[id];
 					waitingIds.shift();
 				}
 			}

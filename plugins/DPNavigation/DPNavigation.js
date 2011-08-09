@@ -48,8 +48,8 @@ Class("DPNavigation", DP, {
 							)
 							.appendTo(self.container)
 					);
-					for (var id in group) {
-						var a = self.makeLink(id, group[id]).appendTo(
+					for (var j in group) {
+						var a = self.makeLink(group[j]).appendTo(
 							$('<li/>').appendTo(groupEl)
 						);
 						if (a.hasClass('selected')) {
@@ -59,7 +59,7 @@ Class("DPNavigation", DP, {
 				}
 				else {
 					// page
-					self.makeLink(i, data[i]).appendTo(
+					self.makeLink(data[i]).appendTo(
 						$('<li/>').appendTo(self.container)
 					);
 				}
@@ -68,13 +68,13 @@ Class("DPNavigation", DP, {
 		}, 'json');
 	},
 	
-	makeLink: function(id, text) {
+	makeLink: function(data) {
 		var a = $('<a/>', {
-				href: Dibasic.url({ page: id }),
-				text: text
+				href: Dibasic.url({ page: data.id }),
+				text: data.title
 			});
 		
-		if (id == Dibasic.urlParams.page) {
+		if (data.id == Dibasic.urlParams.page) {
 			a.addClass('selected');
 		}
 		

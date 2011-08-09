@@ -32,6 +32,15 @@ Class("DPNavigation", DP, {
 				if (isNaN(i)) {
 					// group name
 					var group = data[i];
+					if (group.length == 1) {
+						// don't display a drop down if there's only one item in it
+						var item = group[0];
+						item.title = i+' » '+item.title;
+						self.makeLink(item).appendTo(
+							$('<li/>').appendTo(self.container)
+						);
+						continue;
+					}
 					var groupEl = $('<ul/>').appendTo(
 						$('<li/>')
 							.append(

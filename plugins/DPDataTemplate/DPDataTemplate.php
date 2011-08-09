@@ -8,8 +8,8 @@ class DPDataTemplate extends DP {
 		$this->options['sortOptions'] = array();
 	}
 	
-	public function order($title, $column) /* ... */ {
-		// $title is the text to display when the user can choose the order
+	public function order($title /*, $column1, $column2, ... */) {
+		// $title is the text to display when the user can choose the order (optional if only one column is used)
 		
 		// $column should be just the column name when ASC
 		// and with a "-" prepended when ordering DESC
@@ -17,6 +17,11 @@ class DPDataTemplate extends DP {
 		
 		$args = func_get_args();
 		array_shift($args);
+		
+		if (count($args) == 0) {
+			$args = array($title);
+		}
+		
 		$order = array();
 		foreach ($args as $c) {
 			$direction = ($c[0] != '-' ? 'ASC' : 'DESC');

@@ -141,6 +141,7 @@ Class("DPDBInterface", DP, {
 			var newData = {};
 			
 			self._data[data.id] = newData[data.id] = data;
+			self.lastEdit = new Date().getTime();
 			if ($.isFunction(callback)) {
 				callback(newData);
 			}
@@ -174,6 +175,7 @@ Class("DPDBInterface", DP, {
 				self._data[id] = data[id];
 				delete self._waitingFor[id];
 			}
+			self.lastEdit = new Date().getTime();
 			if ($.isFunction(callback)) {
 				callback(data);
 			}
@@ -212,6 +214,7 @@ Class("DPDBInterface", DP, {
 			for (var id in ids) {
 				newData[id] = self._data[id] = null;
 			}
+			self.lastEdit = new Date().getTime();
 			if ($.isFunction(callback)) {
 				callback(newData);
 			}

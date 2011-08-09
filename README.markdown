@@ -32,7 +32,7 @@ The next thing to do, is to create your custom page. You will create a page for 
 
 Let's assume we're creating a blog. The very basic table that we need for that could look like this:
 
-	TABLE post
+	TABLE posts
 	(
 		id INT AUTO_INCREMENT,
 		title VARCHAR(255) NOT NULL,
@@ -44,11 +44,11 @@ During the setup process, Dibasic has created an empty directory named `pages/` 
 
 	<?php
 	
-	$table = new Dibasic('post');
+	$table = new Dibasic('posts');
 	
 	// ...
 
-This tells Dibasic which table we will be editing. In this case, it's the `post` table.
+This tells Dibasic which table we will be editing. In this case, it's the `posts` table.
 
 ### Adding columns
 
@@ -88,11 +88,11 @@ You don't need to specify the key column, i.e. the `id` column. Dibasic will tak
 
 ### Setting the DataRenderer
 
-Next we need to tell Dibasic how we'd like to render existing data. We will use the `setDataRenderer()` member on `Dibasic`. The signature for it looks like this:
+Next we need to tell Dibasic how we'd like to render existing data. We will use the `setDataRenderer()` method on `Dibasic`. The signature for it looks like this:
 
 	Dibasic::setDataRenderer($renderer_name [, $options = array() ]);
 
-`$renderer_name` is similar to the `$input_type` argument of the `addColumn` method. If you look into `Dibasic/plugins/`, you'll see many folders starting with `DP`. Some of it start with `DPData`. You can specify any name out of these that start with `DPData`, omitting the `DP` prefix (not `DPData`!). In our case, we'd simply like to have a table showing all columns, so:
+`$renderer_name` is similar to the `$input_type` argument of the `addColumn` method. If you look into `Dibasic/plugins/`, you'll see many folders starting with `DP`. Some of them start with `DPData`. You can specify any name out of these that start with `DPData`, omitting the `DP` prefix (not `DPData`). In our case, we'd simply like to have a table showing all columns, so:
 
 	// ...
 	
@@ -100,7 +100,7 @@ Next we need to tell Dibasic how we'd like to render existing data. We will use 
 	
 	// ...
 
-If you want to selectively display some columns or change the order of them, you can call the method with the `column` option, like this:
+If you want to selectively display some columns or change the order of them, you can call the method with the `columns` option, like this:
 
 	$renderer = $table->setDataRenderer('DataTable', array( 'columns' => array('title', 'content') ));
 
@@ -112,7 +112,7 @@ To tell the DataRenderer how to order the items, call the `order()` method on `$
 	
 	// ...
 
-The first argument is a description how you are ordering the items. The following options will be used as the ordering parameters. You can pass as many arguments as you like. If you only specify the column name, the data will be sorted in ascending order. If you prefix it with a minus, it will be sorted in descending order.
+The first argument is a description how you are ordering the items. The following options will be used as the ordering parameters. You can pass as many arguments as you like. If you only specify the column name, the data will be sorted in ascending order. If you prefix it with a minus sign, it will be sorted in descending order.
 
 By calling the `order()` method multiple times, the user is given a `<select>` box where he can choose how he would like to order the data, out of the options you have given.
 
@@ -130,7 +130,7 @@ So the complete file will look like this:
 
 	<?php
 	
-	$table = new Dibasic('post');
+	$table = new Dibasic('posts');
 	
 	$table->addColumn('title', 'Text', 'Title');
 	$table->addColumn('content', 'TextArea', 'Content');

@@ -127,6 +127,10 @@ class Dibasic {
 			Dibasic::import('disableFading.js');
 		}
 		
+		if (!$this->dataRenderer) {
+			$this->setDataRenderer('DataTable');
+		}
+		
 		$this->checkDBTable();
 		
 		if (!$this->mainStructure) {

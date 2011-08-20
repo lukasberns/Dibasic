@@ -1,0 +1,10 @@
+.DIRepeatedDateCalendar th, .DIRepeatedDateCalendar td {
+	width: 2em;
+	text-align: center;
+	border-left: 1px solid #ccc;
+}
+
+.DIRepeatedDateCalendar th:first-child, .DIRepeatedDateCalendar td:first-child {
+	text-align: left;
+	border-left: none;
+}

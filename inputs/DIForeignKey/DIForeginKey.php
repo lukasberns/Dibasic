@@ -3,6 +3,8 @@
 Dibasic::import('DISelect');
 
 class DIForeignKey extends DISelect {
+	public $dataType = 'int(11)';
+	
 	public function init() {
 		// fill the options array
 		

@@ -21,9 +21,7 @@ define('DIBASIC_DB_PREFIX', 'Dibasic_');
 
 
 // don't change the following (filesystem paths don't include the trailing slash, urls do)
-define('DOCUMENT_ROOT', dirname($_SERVER['DOCUMENT_ROOT'].'/.'));
-define('DIBASIC_ROOT', dirname(__FILE__));
+define('DOCUMENT_ROOT', preg_replace('|'.preg_quote($_SERVER['SCRIPT_NAME']).'$|', '', $_SERVER['SCRIPT_FILENAME']));
 define('DIBASIC_URL', substr(DIBASIC_ROOT, strlen(DOCUMENT_ROOT)).'/');
-define('DIBASIC_SUPERROOT', dirname(DIBASIC_ROOT));
 define('DIBASIC_SUPERURL', substr(DIBASIC_SUPERROOT, strlen(DOCUMENT_ROOT)).'/');
 define('COOKIE_DIR', DIBASIC_SUPERURL); // where to save the cookies into

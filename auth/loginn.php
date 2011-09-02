@@ -3,7 +3,7 @@
 // loginn.php
 // handels the login authentication
 
-require('../Dibasic.config.php');
+require('../loadConfig.php');
 
 function r_POST($key) {
 	global $errors;

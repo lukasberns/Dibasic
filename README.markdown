@@ -20,7 +20,7 @@ Next edit the `Dibasic.config-sample.php` file inside the newly created Dibasic 
 	inputs/
 	pages/
 	plugins/
-	uploaded_files/
+	uploaded/
 
 Now you can log in using the username and password written on the page. The first thing to do after you logged into Dibasic is to change your username and password. The interface should make this an easy task.
 

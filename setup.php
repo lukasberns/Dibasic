@@ -102,7 +102,7 @@ file_put_contents(DIBASIC_SUPERROOT.'/index.php', '<?php require("Dibasic/index.
 mkdir(DIBASIC_SUPERROOT.'/pages');
 mkdir(DIBASIC_SUPERROOT.'/plugins');
 mkdir(DIBASIC_SUPERROOT.'/inputs');
-mkdir(DIBASIC_SUPERROOT.'/uploaded_files');
+mkdir(DIBASIC_SUPERROOT.'/uploaded');
 
 
 ?>

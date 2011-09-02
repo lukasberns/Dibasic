@@ -5,7 +5,7 @@ Dibasic::import(':ajaxFileUpload/jquery.ajaxFileUpload.css');
 Dibasic::import(':ajaxFileUpload/finish_upload.php');
 
 if (!defined('CONFIG_UPLOAD_DIR')) {
-	define('CONFIG_UPLOAD_DIR', DIBASIC_SUPERROOT.'/uploaded_files');
+	define('CONFIG_UPLOAD_DIR', DIBASIC_SUPERROOT.'/uploaded');
 }
 
 class DIFileUpload extends DI {

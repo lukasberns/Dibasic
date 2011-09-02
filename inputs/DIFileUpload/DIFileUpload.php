@@ -4,6 +4,10 @@ Dibasic::import(':ajaxFileUpload/jquery.ajaxFileUpload.js');
 Dibasic::import(':ajaxFileUpload/jquery.ajaxFileUpload.css');
 Dibasic::import(':ajaxFileUpload/finish_upload.php');
 
+if (!defined('CONFIG_UPLOAD_DIR')) {
+	define('CONFIG_UPLOAD_DIR', DIBASIC_SUPERROOT.'/uploaded_files');
+}
+
 class DIFileUpload extends DI {
 	public static $tmp_dir;
 	public static $upload_dir;
@@ -19,11 +23,12 @@ class DIFileUpload extends DI {
 	
 	public static function loadSettings() {
 		$basedir = dirname(__FILE__).'/ajaxFileUpload';
-		require("$basedir/read_settings.php");
 		$urlDir = substr($basedir, strlen(DOCUMENT_ROOT));
 		
-		self::$tmp_dir = $tmp_dir;
-		self::$upload_dir = $upload_dir;
+		if (!defined('CONFIG_UPLOAD_DIR')) {
+			trigger_error('CONFIG_UPLOAD_DIR was not defined. DIFileUpload and all its subclasses require this constant.', E_USER_ERROR);
+		}
+		self::$upload_dir = dirname(CONFIG_UPLOAD_DIR.'/.'); // remove trailing slash
 		
 		self::$upload_cgi = "$urlDir/upload.cgi";
 		self::$fileprogress_php = "$urlDir/fileprogress.php";
@@ -38,7 +43,7 @@ class DIFileUpload extends DI {
 	
 	public function processData(&$data) {
 		$value = &$data[$this->columnName];
-		$info = finish_upload($value, null, "{$this->Dibasic->tableName}/{$this->columnName}");
+		$info = finish_upload($value, self::$upload_dir, null, "{$this->Dibasic->tableName}/{$this->columnName}");
 		$value = $info['url'];
 		if ($this->sizeColumnName && isset($info['size'])) {
 			$data[$this->sizeColumnName] = $info['size'];

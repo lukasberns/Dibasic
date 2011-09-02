@@ -1,6 +1,6 @@
 <?php
 
-function finish_upload($data, array $accept=null, $upload_path=null) {
+function finish_upload($data, $upload_dir, array $accept=null, $upload_path=null) {
 	// pass the data passed by the ajax upload (*sid*|*oldvalue*)
 	// this function will move the file to the correct directory,
 	// deletes old files if neccessary

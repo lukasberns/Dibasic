@@ -44,11 +44,16 @@ use File::Temp qw/ tempfile tempdir /;
 
 # $settingsfile = $ENV{DOCUMENT_ROOT}."/../upload_settings.php";
 $settingsfile = "./upload_settings.php";
-if (-e $settingsfile)
+unless (-e $settingsfile)
 {
-    #Execute settingsfile (must be valid perl code)
-    do $settingsfile;
+    $settingsfile = "./upload_settings-default.php"
 } 
+
+#Execute settingsfile (must be valid perl code)
+if (-e $settingsfile) {
+    do $settingsfile;
+}
+
 if(!(-e $settingsfile) or !$max_upload or !$tmp_dir)
 {
     #Default setting values

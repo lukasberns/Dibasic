@@ -7,7 +7,3 @@ $max_upload = 41943040;
 
 # temporary directory, must be writable by both cgi-script and php scripts
 $tmp_dir = "/tmp"; 
-
-# Where to permanently store the uploaded files, when the upload is completed
-# This directory must be writable by php
-$upload_dir = "/home/username/www/uploaded_files"; 

@@ -11,7 +11,7 @@ function finish_upload($data, $upload_dir, array $accept=null, $upload_path=null
 	
 	
 	// to be platform independent about trailing slashes
-	$DOCUMENT_ROOT = dirname($_SERVER['DOCUMENT_ROOT'].'/.');
+	$DOCUMENT_ROOT = preg_replace('|'.preg_quote($_SERVER['SCRIPT_NAME']).'$|', '', $_SERVER['SCRIPT_FILENAME']);
 	
 	$data = explode('|', $data);
 	$sid = ereg_replace('[^a-zA-Z0-9]', '', $data[0]);

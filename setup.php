@@ -98,12 +98,30 @@ foreach ($pages as $page) {
 	}
 }
 
-file_put_contents(DIBASIC_SUPERROOT.'/index.php', '<?php require("Dibasic/index.php"); ?>');
-mkdir(DIBASIC_SUPERROOT.'/pages');
-mkdir(DIBASIC_SUPERROOT.'/plugins');
-mkdir(DIBASIC_SUPERROOT.'/inputs');
-mkdir(DIBASIC_SUPERROOT.'/uploaded');
+if (!file_exists(DIBASIC_SUPERROOT.'/index.php')) {
+	file_put_contents(DIBASIC_SUPERROOT.'/index.php', '<?php require("Dibasic/index.php"); ?>');
+}
 
+$directories = array(
+	DIBASIC_SUPERROOT.'/pages',
+	DIBASIC_SUPERROOT.'/plugins',
+	DIBASIC_SUPERROOT.'/inputs',
+	DIBASIC_SUPERROOT.'/uploaded'
+);
+foreach ($directories as $dir) {
+	if (!file_exists($dir)) {
+		mkdir($dir);
+	}
+}
+chmod(DIBASIC_SUPERROOT.'/uploaded', 0755);
+if (!file_exists(DIBASIC_SUPERROOT.'/uploaded/.htaccess')) {
+	file_put_contents(DIBASIC_SUPERROOT.'/uploaded/.htaccess', <<<HTACCESS
+Options -Indexes
+Options -ExecCGI 
+AddHandler cgi-script .php .php3 .php4 .phtml .pl .py .jsp .asp .htm .shtml .sh .cgi 
+HTACCESS
+	);
+}
 
 ?>
 

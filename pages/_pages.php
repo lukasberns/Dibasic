@@ -51,7 +51,7 @@ function createPagePermissions($event) {
 
 function deletePagePermissions($event) {
 	$data = $event->getInfo();
-	$pageId = key($data);
+	$pageId = $data['id'];
 	
 	$permissionsTable = DIBASIC_DB_PREFIX.'page_to_user';
 	$q = "DELETE FROM $permissionsTable WHERE page = $pageId";

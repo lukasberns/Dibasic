@@ -155,14 +155,14 @@ class DPDBInterface extends DP {
 		$json = array();
 		while ($row = mysql_fetch_assoc($query_result)) {
 			$json[$row[$key]] = $row;
+			EventCenter::sharedCenter()->fire('db.delete', $this, $row); // `delete' is present form since it is not deleted yet
 		}
-		EventCenter::sharedCenter()->fire('db.delete', $this, $json); // `delete' is present form since it is not deleted yet
 		
 		// delete
 		$query = "DELETE FROM `{$this->Dibasic->tableName}` WHERE `{$key}` IN ($ids)";
 		$query_result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 		
-		EventCenter::sharedCenter()->fire('db.deleted', $this);
+		EventCenter::sharedCenter()->fire('db.deleted', $this, $json);
 		
 		echo json_encode($ids_arr);
 	}

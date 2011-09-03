@@ -52,12 +52,10 @@ class DIFileUpload extends DI {
 	
 	public function deleteFile($event) {
 		$info = $event->getInfo();
-		foreach ($info as $id => $data) {
-			if (isset($data[$this->columnName][0])) {
-				$file = $_SERVER['DOCUMENT_ROOT'].$data[$this->columnName];
-				if (file_exists($file)) {
-					unlink($file);
-				}
+		if (isset($data[$this->columnName][0])) {
+			$file = DOCUMENT_ROOT.$data[$this->columnName];
+			if (file_exists($file)) {
+				unlink($file);
 			}
 		}
 	}

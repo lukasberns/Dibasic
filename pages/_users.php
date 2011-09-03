@@ -41,15 +41,13 @@ $d = $table->setDataRenderer('DataTable', array(
 $d->order('', 'username');
 
 function preventOwnAccountFromDeletion($event) {
-	$data = $event->getInfo();
+	$row = $event->getInfo();
 	if (!isset($_COOKIE['session_id'])) {
 		return;
 	}
-	foreach ($data as $row) {
-		if ($row['session_id'] == $_COOKIE['session_id']) {
-			// current account, die() to prevent deletion
-			die("You can’t delete your own account!");
-		}
+	if ($row['session_id'] == $_COOKIE['session_id']) {
+		// current account, die() to prevent deletion
+		die("You can’t delete your own account!");
 	}
 }
 

@@ -4,6 +4,7 @@
 
 $dir = dirname(__FILE__);
 require("$dir/loadConfig.php");
+require(DIBASIC_ROOT."/checkSystem.php");
 require(DIBASIC_ROOT."/auth/verify_user.php");
 require(DIBASIC_ROOT."/Dibasic.php");
 

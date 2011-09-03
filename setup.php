@@ -2,7 +2,7 @@
 
 // setup the database tables used by Dibasic
 
-require('Dibasic.config.php');
+require('loadConfig.php');
 require('Dibasic.php');
 
 function table_exists($name) {

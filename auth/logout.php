@@ -3,7 +3,7 @@
 // logout.php
 // logs the user out
 
-require('../Dibasic.config.php');
+require('../loadConfig.php');
 
 $session_id = isset($_COOKIE['session_id']) ? $_COOKIE['session_id'] : '';
 

@@ -76,12 +76,18 @@ class DIForeignKey extends DISelect {
 		
 		while ($r = mysql_fetch_assoc($qr)) {
 			$v = array();
+			$missing = array();
 			foreach ($this->columns as $col) {
 				if (!isset($r[$col])) {
-					trigger_error('The column "'.$col.'" provided by the "column" option was not found in the table', E_USER_ERROR);
+					$missing [] = $col;
+				}
+				else {
+					$v[] = $r[$col];
 				}
 				
-				$v[] = $r[$col];
+				if (count($missing)) {
+					return array(0 => 'The column(s) "'.implode('", "', $missing).'" provided by the "column" option was/were not found in the table '.$this->table);
+				}
 			}
 			$options[$r['id']] = implode(', ', $v);
 		}

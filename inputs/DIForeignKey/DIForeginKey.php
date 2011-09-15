@@ -54,6 +54,16 @@ class DIForeignKey extends DISelect {
 	}
 	
 	public function getSelectOptions() {
+		$exists_q = mysql_query("SHOW TABLES LIKE '$this->table'") or trigger_error(mysql_error(), E_USER_ERROR);
+		$tableExists = mysql_num_rows($exists_q) > 0;
+		
+		if (!$tableExists) {
+			// don't stop program even if foreign table does not exist
+			// otherwise it's very annoying when the foreign table is the same as the local table
+			// you won't be able to create the local table in the first place
+			return array( 0 => "DIForeignKey ($this->name): Table $this->table does not exist.");
+		}
+		
 		$q = "SELECT * FROM `$this->table` ORDER BY $this->order";
 		$qr = mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
 		

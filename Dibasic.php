@@ -283,13 +283,7 @@ class Dibasic {
 		
 		// first check if the table exists
 		$exists_q = mysql_query("SHOW TABLES LIKE '$this->tableName'") or trigger_error(mysql_error(), E_USER_ERROR);
-		$this->tableExists = false;
-		while ($exists_info = mysql_fetch_array($exists_q)) {
-			if ($exists_info[0] == $this->tableName) {
-				$this->tableExists = true;
-				break;
-			}
-		}
+		$this->tableExists = mysql_num_rows($exists_q) > 0;
 		
 		if (!$this->tableExists) {
 			return;

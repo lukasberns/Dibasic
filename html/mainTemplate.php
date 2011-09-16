@@ -19,6 +19,7 @@
 	<div>
 	{{= Dibasic.DPAddForm.widget() }}
 	{{= Dibasic.dataRenderer.sortWidget() }}
+	{{= Dibasic.dataRenderer.filterWidget() }}
 	</div>
 
 	<div>

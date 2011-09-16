@@ -2,10 +2,11 @@
 
 class DPDataTemplate extends DP {
 	protected $order = array();
-	protected $where;
+	protected $where = array();
 	
 	public function init() {
 		$this->options['sortOptions'] = array();
+		$this->options['filterOptions'] = array();
 	}
 	
 	public function order($title /*, $column1, $column2, ... */) {
@@ -32,16 +33,22 @@ class DPDataTemplate extends DP {
 		$this->options['sortOptions'][] = $title;
 	}
 	
-	public function where($column, $value) {
+	public function where($title /* , $column1, $value1, ... */) {
+		// $title will be displayed if you call this function more than once, so you can choose
 		// $column should be the column name with the operator appended
+		// the value type matters. so 1 !== "1"
 		// you can specify as many argument tuples as you want
+		// if you only specify the title, all results will be displayed
+		// this function is just for display preferences, so it doesn't work for display permission management
 		
 		$args = func_get_args();
 		$where = array();
-		for ($i = 0; $i < floor(count($args)/2); $i++) {
-			$where[] = $args[$i*2] . '"' . mysql_real_escape_string($args[$i*2 + 1]) . '"';
+		for ($i = 0, $l = floor((count($args)-1)/2); $i < $l; $i++) {
+			$where[] = $args[$i*2 + 1] . '"' . mysql_real_escape_string($args[$i*2 + 2]) . '"';
 		}
-		$this->where = implode(' AND ', $where);
+		
+		$this->where[$title] = implode(' AND ', $where);
+		$this->options['filterOptions'][] = $title;
 	}
 	
 	public function act() {
@@ -56,6 +63,7 @@ class DPDataTemplate extends DP {
 	public function getData() {
 		// returns ids
 		$query = "SELECT `{$this->Dibasic->key}` FROM `{$this->Dibasic->tableName}`";
+		$query .= $this->getWhereCondition();
 		if (count($this->order)) {
 			if (isset($_GET['sortBy']) and isset($this->options['sortOptions'][$_GET['sortBy']])) {
 				$order = $this->order[$this->options['sortOptions'][$_GET['sortBy']]];
@@ -64,9 +72,6 @@ class DPDataTemplate extends DP {
 				$order = current($this->order);
 			}
 			$query .= " ORDER BY $order";
-		}
-		if ($this->where) {
-			$query .= " WHERE $this->where";
 		}
 		if (isset($_GET['dataPage']) and isset($_GET['perpage'])) {
 			$page = (int) $_GET['dataPage'] - 1;
@@ -88,12 +93,25 @@ class DPDataTemplate extends DP {
 		// will return the total number of entries
 		
 		$query = "SELECT COUNT(*) FROM {$this->Dibasic->tableName}";
-		if ($this->where) {
-			$query .= " WHERE $this->where";
-		}
+		$query .= $this->getWhereCondition();
 		$query_result = mysql_query($query);
 		echo mysql_result($query_result, 0);
 		
 		die();
+	}
+	
+	public function getWhereCondition() {
+		if (count($this->where)) {
+			if (isset($_GET['filterBy']) and isset($this->options['filterOptions'][$_GET['filterBy']])) {
+				$where = $this->where[$this->options['filterOptions'][$_GET['filterBy']]];
+			}
+			else {
+				$where = current($this->where);
+			}
+			if ($where) {
+				return " WHERE $where";
+			}
+		}
+		return '';
 	}
 }

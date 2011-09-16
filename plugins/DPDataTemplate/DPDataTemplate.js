@@ -14,6 +14,7 @@ Class("DPDataTemplate", DP, {
 	page: 1, // pages start with 1
 	perpage: 10,
 	pagerPlusMinus: 4,
+	filterOption: 0,
 	sortOption: 0,
 	
 	init: function($super, def) {
@@ -42,6 +43,9 @@ Class("DPDataTemplate", DP, {
 			
 			var sortBy = $.bbq.getState(self.className+'_sortBy') || 0;
 			self.sortBy(sortBy);
+			
+			var filterBy = $.bbq.getState(self.className+'_filterBy') || 0;
+			self.filterBy(filterBy);
 		});
 	},
 	
@@ -85,13 +89,55 @@ Class("DPDataTemplate", DP, {
 	},
 	
 	sortBy: function(sortBy) {
-		if (!this.sorter || this.sortBy == sortBy) { return; }
+		if (!this.sorter || this.sortOption == sortBy) { return; }
 		
 		if (this.sorter.val() != sortBy) {
 			this.sorter.val(sortBy);
 		}
 		
 		this.sortOption = sortBy;
+		this.displayData();
+	},
+	
+	filterWidget: function() {
+		//this.filter = 
+		var filterOptions = this.definition.filterOptions || [];
+		if (filterOptions.length < 2) {
+			return '';
+		}
+		
+		var self = this;
+		
+		this.filter = $('<select/>', { id: this.className+'_filter' })
+			.change(function() {
+				var state = {};
+				state[self.className+'_filterBy'] = this.value;
+				$.bbq.pushState(state);
+			});
+		
+		for (var i in filterOptions) {
+			var option = $('<option/>')
+							.val(i)
+							.text(filterOptions[i])
+							.appendTo(this.filter);
+			if (!i) {
+				option.attr('selected', 'selected');
+			}
+		}
+		
+		var label = $('<label/>', { 'for': this.className+'_filter' }).text('Filter by: ');
+		
+		return label.add(this.filter);
+	},
+	
+	filterBy: function(filterBy) {
+		if (!this.filter || this.filterOption == filterBy) { return; }
+		
+		if (this.filter.val() != filterBy) {
+			this.filter.val(filterBy);
+		}
+		
+		this.filterOption = filterBy;
 		this.displayData();
 	},
 	
@@ -109,7 +155,8 @@ Class("DPDataTemplate", DP, {
 					getData:true,
 					dataPage:self.page,
 					perpage:self.perpage,
-					sortBy:self.sortOption
+					sortBy:self.sortOption,
+					filterBy:self.filterOption
 				}, function(ids, textStatus) {
 					self._ids = JSON.parse(ids);
 					Dibasic.DPDBInterface.getData(self._ids, function(data) {
@@ -192,7 +239,10 @@ Class("DPDataTemplate", DP, {
 		var self = this;
 		if (!this._totalCountFetchedTime || this._totalCountFetchedTime < Dibasic.DPDBInterface.lastEdit) {
 			// fetch the total count on first access and every time the totalCount might have changed
-			$.get(Dibasic.url({action:this.className}), {getTotalCount:true}, function(totalCount, textStatus) {
+			$.get(Dibasic.url({action:this.className}), {
+					getTotalCount:true,
+					filterBy:self.filterOption
+				}, function(totalCount, textStatus) {
 				self._totalCount = JSON.parse(totalCount);
 				self._totalCountFetchedTime = new Date().getTime();
 				if ($.isFunction(callback)) {

@@ -138,6 +138,7 @@ Class("DPDataTemplate", DP, {
 		}
 		
 		this.filterOption = filterBy;
+		this._totalCountFetchedTime = 0; // total count might have changed
 		this.displayData();
 	},
 	

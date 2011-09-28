@@ -96,16 +96,41 @@ class DPDataTemplate extends DP {
 	}
 	
 	public function getWhereCondition() {
+		$where = array();
+		
 		if (count($this->where)) {
 			if (isset($_GET['filterBy']) and isset($this->options['filterOptions'][$_GET['filterBy']])) {
-				$where = $this->where[$this->options['filterOptions'][$_GET['filterBy']]];
+				$w = $this->where[$this->options['filterOptions'][$_GET['filterBy']]];
+				if ($w) { $where[] = $w; }
 			}
 			else {
-				$where = current($this->where);
+				$w = current($this->where);
+				if ($w) { $where[] = $w; }
 			}
-			if ($where) {
-				return " WHERE $where";
+		}
+		
+		if (isset($_GET['search'])) {
+			$search = trim(mb_convert_kana($_GET['search'], 's')); // zen-kaku space to han-kaku space
+			if ($search) {
+				$parts = preg_split('/\s+/', $search);
+				$and = array();
+				foreach ($parts as $p) {
+					$or = array();
+					foreach ($this->Dibasic->columns as $col => $def) {
+						$or[] = "`$col` LIKE '%".mysql_real_escape_string($p)."%'";
+					}
+					if (count($or)) {
+						$and[] = '('.implode(' OR ', $or).')';
+					}
+				}
+				if (count($and)) {
+					$where[] = implode(' AND ', $and);
+				}
 			}
+		}
+		
+		if (count($where)) {
+			return ' WHERE '.implode(' AND ', $where);
 		}
 		return '';
 	}

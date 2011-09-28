@@ -16,6 +16,7 @@ Class("DPDataTemplate", DP, {
 	pagerPlusMinus: 4,
 	filterOption: 0,
 	sortOption: 0,
+	searchQuery: '',
 	
 	init: function($super, def) {
 		$super(def);
@@ -46,6 +47,9 @@ Class("DPDataTemplate", DP, {
 			
 			var filterBy = $.bbq.getState(self.className+'_filterBy') || 0;
 			self.filterBy(filterBy);
+			
+			var search = $.bbq.getState(self.className+'_searchFor') || 0;
+			self.searchFor(search);
 		});
 	},
 	
@@ -142,6 +146,43 @@ Class("DPDataTemplate", DP, {
 		this.displayData();
 	},
 	
+	searchWidget: function() {
+		//this.search = 
+		var self = this;
+		
+		var form = $('<form/>')
+			.css({
+				'float': 'right'
+			})
+			.submit(function() {
+				var state = {};
+				state[self.className+'_searchFor'] = self.searchBox.val();
+				state[self.className] = 1; // switch back to page 1
+				$.bbq.pushState(state);
+				return false;
+			});
+		
+		this.searchBox = $('<input/>', { type: 'search' }).appendTo(form);
+		$('<input/>', { 'type': 'submit' }).val('Search').css({
+			fontSize: '0.8em', 
+			margin: '0 1ex'
+		}).appendTo(form);
+		
+		return form;
+	},
+	
+	searchFor: function(search) {
+		if (!this.searchBox || this.searchQuery == search) { return; }
+		
+		if (this.searchBox.val() != search) {
+			this.searchBox.val(search);
+		}
+		
+		this.searchQuery = search;
+		this._totalCountFetchedTime = 0; // total count might have changed
+		this.displayData();
+	},
+	
 	getData: function(callback) {
 		// callback will be executed after data is received
 		// function(data) { ... } where *data* is the received data
@@ -157,7 +198,8 @@ Class("DPDataTemplate", DP, {
 					dataPage:self.page,
 					perpage:self.perpage,
 					sortBy:self.sortOption,
-					filterBy:self.filterOption
+					filterBy:self.filterOption,
+					search:self.searchQuery
 				}, function(ids, textStatus) {
 					self._ids = JSON.parse(ids);
 					Dibasic.DPDBInterface.getData(self._ids, function(data) {
@@ -242,7 +284,8 @@ Class("DPDataTemplate", DP, {
 			// fetch the total count on first access and every time the totalCount might have changed
 			$.get(Dibasic.url({action:this.className}), {
 					getTotalCount:true,
-					filterBy:self.filterOption
+					filterBy:self.filterOption,
+					search:self.searchQuery
 				}, function(totalCount, textStatus) {
 				self._totalCount = JSON.parse(totalCount);
 				self._totalCountFetchedTime = new Date().getTime();

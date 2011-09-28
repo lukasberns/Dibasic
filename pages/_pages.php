@@ -47,6 +47,13 @@ function createPagePermissions($event) {
 			mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
 		}
 	}
+	else {
+		// at least add permissions to user who created the page
+		$permissionsTable = DIBASIC_DB_PREFIX.'page_to_user';
+		$userId = $GLOBALS['user']['id'];
+		$q = "INSERT INTO $permissionsTable (page, user) VALUES ($pageId, $userId)";
+		mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
+	}
 }
 
 function deletePagePermissions($event) {

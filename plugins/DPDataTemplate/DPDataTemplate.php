@@ -33,21 +33,16 @@ class DPDataTemplate extends DP {
 		$this->options['sortOptions'][] = $title;
 	}
 	
-	public function where($title /* , $column1, $value1, ... */) {
+	public function where($title, $condition = '' /* , $replacements, ... */) {
 		// $title will be displayed if you call this function more than once, so you can choose
-		// $column should be the column name with the operator appended
-		// the value type matters. so 1 !== "1"
-		// you can specify as many argument tuples as you want
+		// $condition should be the SQL where condition (without the WHERE)
+		// this will be sprintf formatted, with all replacements being escaped.
+		// e.g. ->where('Apples', 'type = "%s"', 'Apple')
 		// if you only specify the title, all results will be displayed
 		// this function is just for display preferences, so it doesn't work for display permission management
 		
-		$args = func_get_args();
-		$where = array();
-		for ($i = 0, $l = floor((count($args)-1)/2); $i < $l; $i++) {
-			$where[] = $args[$i*2 + 1] . '"' . mysql_real_escape_string($args[$i*2 + 2]) . '"';
-		}
-		
-		$this->where[$title] = implode(' AND ', $where);
+		$replacements = array_splice(func_get_args(), 2);
+		$this->where[$title] = vsprintf($condition, $replacements);
 		$this->options['filterOptions'][] = $title;
 	}
 	

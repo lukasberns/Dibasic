@@ -156,6 +156,4 @@ For the newly created page to become usable, you need to tell Dibasic about it. 
 	Users can open by default: [check]
 	Insert at: [Beginning]
 
-If you don't check `Users can open by default`, you need to go to `Dibasic » Accounts`, click on `Update` for your account and add yourself the permission for the `Posts` page.
-
 Now you should see that a new item named `Posts` has appeared in the navigation bar. Click on it. Voila, that's your posts editor. (If the `posts` table didn't exist before, Dibasic will show you a `Create` button to create the table for you.)

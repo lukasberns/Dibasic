@@ -51,7 +51,7 @@ Username: {{=row.username}}
 
 TEMPLATE;
 
-$d->where('Only me', 'id=', $user['id']);
+$d->where('Only me', 'id = "%d"', $user['id']);
 
 
 $table->mainStructure = <<<TEMPLATE

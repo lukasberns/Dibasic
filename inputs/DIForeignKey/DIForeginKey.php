@@ -61,7 +61,7 @@ class DIForeignKey extends DISelect {
 			// don't stop program even if foreign table does not exist
 			// otherwise it's very annoying when the foreign table is the same as the local table
 			// you won't be able to create the local table in the first place
-			return array( 0 => "DIForeignKey ($this->name): Table $this->table does not exist.");
+			return array( 0 => "DIForeignKey ($this->columnName): Table $this->table does not exist.");
 		}
 		
 		$q = "SELECT * FROM `$this->table` ORDER BY $this->order";

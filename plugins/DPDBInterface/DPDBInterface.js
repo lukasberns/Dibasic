@@ -47,18 +47,27 @@ Class("DPDBInterface", DP, {
 		var finish = function(data) {
 			// sort data, then call callback
 			if ($.isFunction(callback)) {
-				i = 0;
 				var sorted = [];
-				for (i in ids) {
+				for (var i in ids) {
 					sorted.push(data[ids[i]]);
 				}
 				callback(sorted);
 			}
 		}
 		
+		if (!Dibasic.permissions.select) {
+			finish([]);
+			return;
+		}
+		var checkPermissions = $.isArray(Dibasic.permissions.select);
+		
 		i = 0;
 		for (i in ids) {
 			var id = ids[i];
+			if (checkPermissions && $.inArray(id-0, Dibasic.permissions.select) == -1) {
+				continue;
+			}
+			
 			if (this._data[id] !== undefined) {
 				data[id] = $.extend({}, this._data[id]); // clone the object
 			}

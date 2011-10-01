@@ -1,7 +1,7 @@
 /****
 
-DPAddForm:
-Form to add new entries
+DPDataTable:
+Display entries in a table
 
 ****/
 
@@ -45,6 +45,8 @@ Class("DPDataTable", DPDataTemplate, {
 			self.tbody.html('');
 			for (var i in data) {
 				var row = data[i];
+				if (!row) { continue; }
+				
 				var id = row[Dibasic.key];
 				var tr = $('<tr/>');
 				for (var j in columns) {

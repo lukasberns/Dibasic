@@ -11,6 +11,10 @@ Form to create the table
 
 Class("DPCreateForm", DP, {
 	widget: function() {
+		if (!Dibasic.permissions.create) {
+			return null;
+		}
+		
 		var self = this;
 		return $('<input type="button" value="Create" />').click(function() {
 			$.fancybox(self.initForm(), {

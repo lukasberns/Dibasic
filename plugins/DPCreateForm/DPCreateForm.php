@@ -4,6 +4,12 @@ Dibasic::import('DIText');
 
 class DPCreateForm extends DP {
 	public function act() {
+		if (!$this->Dibasic->permissions['create']) {
+			header('HTTP/1.0 403 Forbidden');
+			echo '{"error":"Permission denied"}';
+			return;
+		}
+		
 		$cols = $this->Dibasic->columns;
 		$colDefs = array();
 		$key = mysql_real_escape_string($_POST['key']);

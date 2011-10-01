@@ -2,6 +2,12 @@
 
 class DPAlterForm extends DP {
 	public function act() {
+		if (!$this->Dibasic->permissions['alter']) {
+			header('HTTP/1.0 403 Forbidden');
+			echo '{"error":"Permission denied"}';
+			return;
+		}
+		
 		$cols = $this->Dibasic->columns;
 		$mods = $this->Dibasic->tableModifications;
 		

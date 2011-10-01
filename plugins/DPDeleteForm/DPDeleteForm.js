@@ -17,6 +17,10 @@ Class("DPDeleteForm", DP, {
 	},
 	
 	widget: function(id) {
+		if (!Dibasic.permissions['delete'] || ($.isArray(Dibasic.permissions['delete']) && $.inArray(id-0, Dibasic.permissions['delete']) == -1 )) {
+			return null;
+		}
+		
 		var self = this;
 		return $('<input type="button" value="Delete" />').click(function() {
 			Dibasic.DPDBInterface.getData(id, function(data) {

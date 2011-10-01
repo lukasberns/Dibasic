@@ -2,18 +2,24 @@
 
 class DPDBInterface extends DP {
 	public function act() {
-		if (isset($_POST['get'])) {
+		if (isset($_POST['get']) and $this->Dibasic->permissions['select']) {
 			$this->getData();
+			return;
 		}
-		else if (isset($_POST['insert'])) {
+		else if (isset($_POST['insert']) and $this->Dibasic->permissions['insert']) {
 			$this->insert();
+			return;
 		}
-		else if (isset($_POST['update'])) {
+		else if (isset($_POST['update']) and $this->Dibasic->permissions['update']) {
 			$this->update();
+			return;
 		}
-		else if (isset($_POST['remove'])) {
+		else if (isset($_POST['remove']) and $this->Dibasic->permissions['delete']) {
 			$this->remove();
+			return;
 		}
+		header('HTTP/1.0 403 Forbidden');
+		echo '{"error":"Permission denied"}';
 	}
 	
 	protected function getData() {
@@ -37,8 +43,13 @@ class DPDBInterface extends DP {
 		$query_result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 		
 		$data = array();
+		$permissions = $this->Dibasic->permissions['select'];
+		$checkPermissions = is_array($permissions);
 		while ($row = mysql_fetch_assoc($query_result)) {
 			$id = $row[$key];
+			if ($checkPermissions and !in_array(intval($id), $permissions)) {
+				continue; // silently drop entry to not even let know that this exists
+			}
 			foreach ($row as $k=>$v) {
 				if (isset($this->Dibasic->columns[$k])) {
 					$this->Dibasic->columns[$k]->willSendData($row);
@@ -99,10 +110,17 @@ class DPDBInterface extends DP {
 	
 	protected function update() {
 		$data = json_decode($_POST['update'], true);
+		$ids = array();
 		$key = $this->Dibasic->key;
 		$DIs = $this->Dibasic->columns;
 		
+		$permissions = $this->Dibasic->permissions['update'];
+		$checkPermissions = is_array($permissions);
 		foreach ($data as $id => $row) {
+			if ($checkPermissions and !in_array(intval($id), $permissions)) {
+				continue; // silently drop
+			}
+			
 			$values = '';
 			foreach ($DIs as $name => $DI) {
 				if (isset($row[$name])) {
@@ -110,6 +128,7 @@ class DPDBInterface extends DP {
 				}
 			}
 			
+			$ids[] = intval($id);
 			$row[$key] = $id;
 			EventCenter::sharedCenter()->fire('db.update', $this, $row);
 			
@@ -124,15 +143,18 @@ class DPDBInterface extends DP {
 			mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 		}
 		
-		$ids = implode(',', array_map('intval', array_keys($data)));
-		$query = "SELECT * FROM `{$this->Dibasic->tableName}` WHERE `{$key}` IN ($ids);";
-		$query_result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-		
 		$json = array();
-		while ($row = mysql_fetch_assoc($query_result)) {
-			$json[$row[$key]] = $row;
-		}
 		
+		if (count($ids)) {
+			$ids = implode(',', $ids);
+			$query = "SELECT * FROM `{$this->Dibasic->tableName}` WHERE `{$key}` IN ($ids);";
+			$query_result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+			
+			while ($row = mysql_fetch_assoc($query_result)) {
+				$id = $row[$key];
+				$json[$id] = $row;
+			}
+		}
 		
 		EventCenter::sharedCenter()->fire('db.updated', $this, $json);
 		echo json_encode($json);
@@ -146,7 +168,18 @@ class DPDBInterface extends DP {
 			die('Invalid input');
 		}
 		
-		$ids_arr = array_map('intval', explode(',', $ids));
+		$permissions = $this->Dibasic->permissions['delete'];
+		$checkPermissions = is_array($permissions);
+		
+		$ids_arr = array();
+		foreach (explode(',', $ids) as $id) {
+			$id = intval($id);
+			if ($checkPermissions and !in_array($id, $permissions)) {
+				continue; // silently drop
+			}
+			$ids_arr[] = $id;
+		}
+		$ids = implode(',', $ids_arr);
 		
 		// fetch data before deleting
 		$query = "SELECT * FROM `{$this->Dibasic->tableName}` WHERE `{$key}` IN ($ids);";

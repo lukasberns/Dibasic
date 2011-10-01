@@ -20,6 +20,11 @@ Class("DPUpdateForm", DPAddForm, {
 		
 		$(window).bind('hashchange', function() {
 			var id = $.bbq.getState(self.className);
+			
+			if (!Dibasic.permissions.update || ($.isArray(Dibasic.permissions.update) && $.inArray(id-0, Dibasic.permissions.update) == -1)) {
+				id = null;
+			}
+			
 			if (id) {
 				Dibasic.DPDBInterface.getData(id, function(data) {
 					$.fancybox(self.initForm(data), self._fancyboxOptions());
@@ -44,6 +49,10 @@ Class("DPUpdateForm", DPAddForm, {
 	},
 	
 	widget: function(id) {
+		if (!Dibasic.permissions.update || ($.isArray(Dibasic.permissions.update) && $.inArray(id-0, Dibasic.permissions.update) == -1)) {
+			return null;
+		}
+		
 		var self = this;
 		return $('<input type="button" value="Update" />').click(function() {
 			var state = {};

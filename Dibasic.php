@@ -37,6 +37,15 @@ class Dibasic {
 	
 	public $disableFading = true; // this improves the performance a lot
 	
+	public $permissions = array(
+		'select' => true, // pass array of ids to limit select permission to them
+		'create' => true,
+		'alter' => true,
+		'insert' => true,
+		'update' => true, // pass array of ids to limit update permission to them. (to some extent implies select for those)
+		'delete' => true // pass array of ids to limit delete permission to them (to some extent implies select for those)
+	);
+	
 	public function __construct($tableName) {
 		$this->tableName = $tableName;
 		$this->headerFile = DIBASIC_ROOT . '/html/header.php';
@@ -122,6 +131,12 @@ class Dibasic {
 		// first check if db table is set up properly
 		// then, if no $_GET attribute was specified, this creates the bounding box for everything
 		// otherwise it passes the work to the designated classes
+		
+		foreach ($this->permissions as &$p) {
+			if (is_array($p)) {
+				$p = array_map('intval', $p);
+			}
+		}
 		
 		if ($this->disableFading) {
 			Dibasic::import('disableFading.js');
@@ -219,6 +234,7 @@ class Dibasic {
 		$json['tableNeedsModifications'] = $this->tableNeedsModifications;
 		
 		$json['mainStructure'] = $this->mainStructure;
+		$json['permissions'] = $this->permissions;
 		
 		$urlParts = explode('?', $_SERVER['REQUEST_URI']);
 		$json['baseUrl'] = $urlParts[0];

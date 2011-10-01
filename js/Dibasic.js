@@ -91,12 +91,20 @@ Dibasic.hasPermission = function(action, id) {
 		return false;
 	}
 	
+	if (id !== undefined && Dibasic.deny[action] && $.inArray(id-0, Dibasic.deny[action]) > -1) {
+		return false;
+	}
+	
 	switch (action) {
 		case 'update':
 		case 'delete':
 		// you can't update or delete entries you don't have select permission for
 		var select = Dibasic.permissions.select;
 		if (!select) {
+			return false;
+		}
+		
+		if (id !== undefined && $.inArray(id-0, Dibasic.deny.select) > -1) {
 			return false;
 		}
 		

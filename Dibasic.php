@@ -43,7 +43,12 @@ class Dibasic {
 		'alter' => true,
 		'insert' => true,
 		'update' => true, // pass array of ids to limit update permission to them. limited by the select permissions as well
-		'delete' => true // pass array of ids to limit delete permission to them. limited by the select permissions as well
+		'delete' => true, // pass array of ids to limit delete permission to them. limited by the select permissions as well
+	);
+	public $deny = array(
+		'select' => array(), // array of ids to deny permissions to
+		'update' => array(), // array of ids to deny permissions to
+		'delete' => array(), // array of ids to deny permissions to
 	);
 	
 	public function __construct($tableName) {
@@ -138,6 +143,12 @@ class Dibasic {
 			}
 		}
 		
+		foreach ($this->deny as &$d) {
+			if (is_array($d)) {
+				$d = array_map('intval', $d);
+			}
+		}
+		
 		if ($this->disableFading) {
 			Dibasic::import('disableFading.js');
 		}
@@ -204,12 +215,20 @@ class Dibasic {
 			return false;
 		}
 		
+		if ($id !== null and isset($this->deny[$action]) and in_array(intval($id), $this->deny[$action])) {
+			return false;
+		}
+		
 		switch ($action) {
 			case 'update':
 			case 'delete':
 			// you can't update or delete entries you don't have select permission for
 			$select = $this->permissions['select'];
 			if (!$select) {
+				return false;
+			}
+			
+			if ($id !== null and in_array(intval($id), $this->deny['select'])) {
 				return false;
 			}
 			
@@ -283,6 +302,7 @@ class Dibasic {
 		
 		$json['mainStructure'] = $this->mainStructure;
 		$json['permissions'] = $this->permissions;
+		$json['deny'] = $this->deny;
 		
 		$urlParts = explode('?', $_SERVER['REQUEST_URI']);
 		$json['baseUrl'] = $urlParts[0];

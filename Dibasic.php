@@ -412,25 +412,23 @@ class Dibasic {
 							self::import($file);
 						}
 						
-						$dir = opendir($basename);
-						while ($filename = readdir($dir)) {
-							if ($filename[0] == '.' or $filename[0] == '_' or $filename == "$name.php") {
-								continue; // skip this or parent folder and files starting with an . or _
+						foreach (array('php', 'js', 'css') as $ext) {
+							foreach (glob("$basename/*.$ext") as $file) {
+								$filename = basename($file);
+								if ($filename[0] == '.' or $filename[0] == '_' or $filename == "$name.php") {
+									continue; // skip this or parent folder and files starting with an . or _
+								}
+								
+								if (is_dir($file)) {
+									continue; // skip folders
+								}
+								
+								if ($ext == 'js' or $ext == 'css') {
+									$file = substr(realpath($file), strlen(DOCUMENT_ROOT));
+								}
+								
+								self::import($file);
 							}
-							
-							$file = $basename . '/' . $filename;
-							
-							if (is_dir($file)) {
-								continue; // skip folders
-							}
-							
-							$ext = substr($filename, strrpos($filename, '.')+1);
-							
-							if ($ext == 'js' or $ext == 'css') {
-								$file = substr(realpath($file), strlen(DOCUMENT_ROOT));
-							}
-							
-							self::import($file);
 						}
 						$imported = true;
 						break;

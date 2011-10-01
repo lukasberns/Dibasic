@@ -7,6 +7,13 @@
 
 $table = new Dibasic(DIBASIC_DB_PREFIX.'users');
 
+$table->permissions['select'] = array($user['id']);
+$table->permissions['create'] = false;
+$table->permissions['alter'] = false;
+$table->permissions['insert'] = false;
+$table->permissions['update'] = array($user['id']);
+$table->permissions['delete'] = false;
+
 $c_user = $table->c('username', 'UniqueText', 'Username', array(
 	'rules' => array(
 		'minlength' => 5
@@ -63,33 +70,5 @@ $table->mainStructure = <<<TEMPLATE
 </div>
 
 TEMPLATE;
-
-function deny($event) {
-	die("You do not have permission to create or delete users.");
-}
-
-function assertUser($id) {
-	global $user;
-	if ($user['id'] != $id) {
-		die("You do not have permission to view or edit other users.");
-	}
-}
-
-function onlyAllowUser($event) {
-	$updateUserData = $event->getInfo();
-	assertUser($updateUserData['id']);
-}
-
-function onlyAllowUser_array($event) {
-	$data = $event->getInfo();
-	foreach ($data as $id => $userData) {
-		assertUser($id);
-	}
-}
-
-EventCenter::sharedCenter()->addEventListener('db.willSendData', 'onlyAllowUser_array');
-EventCenter::sharedCenter()->addEventListener('db.insert', 'deny');
-EventCenter::sharedCenter()->addEventListener('db.update', 'onlyAllowUser');
-EventCenter::sharedCenter()->addEventListener('db.delete', 'deny');
 
 $table->run();

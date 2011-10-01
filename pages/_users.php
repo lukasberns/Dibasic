@@ -8,6 +8,13 @@
 $table = new Dibasic(DIBASIC_DB_PREFIX.'users');
 $userPermissionsManager = $table->addPlugin('ManageUserPermissions');
 
+$q = sprintf("SELECT id FROM `%s` WHERE id != '%s'", $table->tableName, $user['id']);
+$qr = mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
+$ids = array();
+while ($r = mysql_fetch_assoc($qr)) {
+	$ids[] = $r['id'];
+}
+$table->permissions['delete'] = $ids;
 
 $c_user = $table->c('username', 'UniqueText', 'Username', array(
 	'rules' => array(

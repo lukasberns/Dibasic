@@ -11,7 +11,7 @@ Form to alter the table
 
 Class("DPAlterForm", DP, {
 	widget: function() {
-		if (!Dibasic.permissions.alter) {
+		if (!Dibasic.hasPermission('alter')) {
 			return null;
 		}
 		

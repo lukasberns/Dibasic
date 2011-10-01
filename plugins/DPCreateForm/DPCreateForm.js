@@ -11,7 +11,7 @@ Form to create the table
 
 Class("DPCreateForm", DP, {
 	widget: function() {
-		if (!Dibasic.permissions.create) {
+		if (!Dibasic.hasPermission('create')) {
 			return null;
 		}
 		

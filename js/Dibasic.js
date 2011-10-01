@@ -83,3 +83,53 @@ Dibasic.url = function(getParams) {
 	}
 	return url.substr(0, url.length-1);
 };
+
+Dibasic.hasPermission = function(action, id) {
+	var p = Dibasic.permissions[action];
+	
+	if (!p) {
+		return false;
+	}
+	
+	switch (action) {
+		case 'update':
+		case 'delete':
+		// you can't update or delete entries you don't have select permission for
+		var select = Dibasic.permissions.select;
+		if (!select) {
+			return false;
+		}
+		
+		if ($.isArray(select) && $.inArray(id-0, select) == -1) {
+			// update/delete are stricter than the select permissions
+			
+			if ($.isArray(p)) {
+				// if 123 is in select but not in update/delete, deny
+				// if 123 in not in select but in update/delete, deny as well
+				var update_delete = p;
+				p = [];
+				for (var i in select) {
+					if ($.inArray(select[i], update_delete)) {
+						p.push(select[i]);
+					}
+				}
+			}
+			else {
+				// if update/delete = true, limit them to the select permissions
+				p = select;
+			}
+		}
+		break;
+	}
+	
+	if (id === undefined) {
+		// generic permission test. might be forbidden for specific ids though
+		return p;
+	}
+	
+	if ($.isArray(p) && $.inArray(id-0, p) == -1) {
+		return false;
+	}
+	
+	return true;
+};

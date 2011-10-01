@@ -47,7 +47,7 @@ class DPDataTemplate extends DP {
 	}
 	
 	public function act() {
-		if (!$this->Dibasic->permissions['select']) {
+		if (!$this->Dibasic->hasPermission('select')) {
 			header('HTTP/1.0 403 Forbidden');
 			echo '{"error":"Permission denied"}';
 			return;
@@ -135,8 +135,9 @@ class DPDataTemplate extends DP {
 			}
 		}
 		
-		if (is_array($this->Dibasic->permissions['select'])) {
-			$where[] = "`{$this->Dibasic->key}` IN (".implode(',',array_map('intval', $this->Dibasic->permissions['select'])).")";
+		$allowed_ids = $this->Dibasic->hasPermission('select');
+		if (is_array($allowed_ids)) {
+			$where[] = "`{$this->Dibasic->key}` IN (".implode(',',array_map('intval', $allowed_ids)).")";
 		}
 		
 		if (count($where)) {

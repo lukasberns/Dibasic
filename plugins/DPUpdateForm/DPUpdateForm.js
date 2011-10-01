@@ -21,7 +21,7 @@ Class("DPUpdateForm", DPAddForm, {
 		$(window).bind('hashchange', function() {
 			var id = $.bbq.getState(self.className);
 			
-			if (!Dibasic.permissions.update || ($.isArray(Dibasic.permissions.update) && $.inArray(id-0, Dibasic.permissions.update) == -1)) {
+			if (!Dibasic.hasPermission('update', id)) {
 				id = null;
 			}
 			
@@ -49,7 +49,7 @@ Class("DPUpdateForm", DPAddForm, {
 	},
 	
 	widget: function(id) {
-		if (!Dibasic.permissions.update || ($.isArray(Dibasic.permissions.update) && $.inArray(id-0, Dibasic.permissions.update) == -1)) {
+		if (!Dibasic.hasPermission('update', id)) {
 			return null;
 		}
 		

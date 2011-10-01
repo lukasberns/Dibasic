@@ -55,16 +55,15 @@ Class("DPDBInterface", DP, {
 			}
 		}
 		
-		if (!Dibasic.permissions.select) {
+		if (!Dibasic.hasPermission('select')) {
 			finish([]);
 			return;
 		}
-		var checkPermissions = $.isArray(Dibasic.permissions.select);
 		
 		i = 0;
 		for (i in ids) {
 			var id = ids[i];
-			if (checkPermissions && $.inArray(id-0, Dibasic.permissions.select) == -1) {
+			if (!Dibasic.hasPermission('select', id)) {
 				continue;
 			}
 			

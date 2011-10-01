@@ -42,8 +42,8 @@ class Dibasic {
 		'create' => true,
 		'alter' => true,
 		'insert' => true,
-		'update' => true, // pass array of ids to limit update permission to them. (to some extent implies select for those)
-		'delete' => true // pass array of ids to limit delete permission to them (to some extent implies select for those)
+		'update' => true, // pass array of ids to limit update permission to them. limited by the select permissions as well
+		'delete' => true // pass array of ids to limit delete permission to them. limited by the select permissions as well
 	);
 	
 	public function __construct($tableName) {
@@ -191,6 +191,54 @@ class Dibasic {
 		if (!$this->jsonRequest) {
 			include($this->footerFile);
 		}
+	}
+	
+	public function hasPermission($action, $id = null) {
+		if (!isset($this->permissions[$action])) {
+			trigger_error('Unknown action', E_USER_ERROR);
+			return false;
+		}
+		
+		$p = $this->permissions[$action];
+		if (!$p) {
+			return false;
+		}
+		
+		switch ($action) {
+			case 'update':
+			case 'delete':
+			// you can't update or delete entries you don't have select permission for
+			$select = $this->permissions['select'];
+			if (!$select) {
+				return false;
+			}
+			
+			if (is_array($select)) {
+				// update/delete are stricter than the select permissions
+				
+				if (is_array($p)) {
+					// if 123 is in select but not in update/delete, deny
+					// if 123 in not in select but in update/delete, deny as well
+					$p = array_intersect($select, $p);
+				}
+				else {
+					// if update/delete = true, limit them to the select permissions
+					$p = $select;
+				}
+			}
+			break;
+		}
+		
+		if ($id === null) {
+			// generic permission test. might be forbidden for specific ids though
+			return $p;
+		}
+		
+		if (is_array($p) and !in_array(intval($id), $p)) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	protected function json() {

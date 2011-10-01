@@ -7,11 +7,10 @@
 
 $table = new Dibasic(DIBASIC_DB_PREFIX.'users');
 
-$table->permissions['select'] = array($user['id']);
+$table->permissions['select'] = array($user['id']); // implied for update as well
 $table->permissions['create'] = false;
 $table->permissions['alter'] = false;
 $table->permissions['insert'] = false;
-$table->permissions['update'] = array($user['id']);
 $table->permissions['delete'] = false;
 
 $c_user = $table->c('username', 'UniqueText', 'Username', array(

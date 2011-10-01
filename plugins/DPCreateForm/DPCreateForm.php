@@ -4,7 +4,7 @@ Dibasic::import('DIText');
 
 class DPCreateForm extends DP {
 	public function act() {
-		if (!$this->Dibasic->permissions['create']) {
+		if (!$this->Dibasic->hasPermission('create')) {
 			header('HTTP/1.0 403 Forbidden');
 			echo '{"error":"Permission denied"}';
 			return;

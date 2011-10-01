@@ -2,7 +2,7 @@
 
 class DPAlterForm extends DP {
 	public function act() {
-		if (!$this->Dibasic->permissions['alter']) {
+		if (!$this->Dibasic->hasPermission('alter')) {
 			header('HTTP/1.0 403 Forbidden');
 			echo '{"error":"Permission denied"}';
 			return;

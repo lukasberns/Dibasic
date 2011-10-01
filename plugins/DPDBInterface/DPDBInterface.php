@@ -2,19 +2,19 @@
 
 class DPDBInterface extends DP {
 	public function act() {
-		if (isset($_POST['get']) and $this->Dibasic->permissions['select']) {
+		if (isset($_POST['get']) and $this->Dibasic->hasPermission('select')) {
 			$this->getData();
 			return;
 		}
-		else if (isset($_POST['insert']) and $this->Dibasic->permissions['insert']) {
+		else if (isset($_POST['insert']) and $this->Dibasic->hasPermission('insert')) {
 			$this->insert();
 			return;
 		}
-		else if (isset($_POST['update']) and $this->Dibasic->permissions['update']) {
+		else if (isset($_POST['update']) and $this->Dibasic->hasPermission('update')) {
 			$this->update();
 			return;
 		}
-		else if (isset($_POST['remove']) and $this->Dibasic->permissions['delete']) {
+		else if (isset($_POST['remove']) and $this->Dibasic->hasPermission('delete')) {
 			$this->remove();
 			return;
 		}
@@ -43,11 +43,9 @@ class DPDBInterface extends DP {
 		$query_result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 		
 		$data = array();
-		$permissions = $this->Dibasic->permissions['select'];
-		$checkPermissions = is_array($permissions);
 		while ($row = mysql_fetch_assoc($query_result)) {
 			$id = $row[$key];
-			if ($checkPermissions and !in_array(intval($id), $permissions)) {
+			if (!$this->Dibasic->hasPermission('select', $id)) {
 				continue; // silently drop entry to not even let know that this exists
 			}
 			foreach ($row as $k=>$v) {
@@ -114,10 +112,8 @@ class DPDBInterface extends DP {
 		$key = $this->Dibasic->key;
 		$DIs = $this->Dibasic->columns;
 		
-		$permissions = $this->Dibasic->permissions['update'];
-		$checkPermissions = is_array($permissions);
 		foreach ($data as $id => $row) {
-			if ($checkPermissions and !in_array(intval($id), $permissions)) {
+			if (!$this->Dibasic->hasPermission('update', $id)) {
 				continue; // silently drop
 			}
 			
@@ -168,13 +164,9 @@ class DPDBInterface extends DP {
 			die('Invalid input');
 		}
 		
-		$permissions = $this->Dibasic->permissions['delete'];
-		$checkPermissions = is_array($permissions);
-		
 		$ids_arr = array();
 		foreach (explode(',', $ids) as $id) {
-			$id = intval($id);
-			if ($checkPermissions and !in_array($id, $permissions)) {
+			if (!$this->Dibasic->hasPermission('delete', $id)) {
 				continue; // silently drop
 			}
 			$ids_arr[] = $id;

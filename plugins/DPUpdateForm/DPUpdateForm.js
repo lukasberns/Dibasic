@@ -115,7 +115,14 @@ Class("DPUpdateForm", DPAddForm, {
 		this.trigger('willSubmit');
 		var self = this;
 		var data = {};
-		data[this._id] = Dibasic.getValues();
+		var values = Dibasic.getValues();
+		data[this._id] = values;
+		
+		for (var col in values) {
+			if (values[col] == this._initialValues[col]) {
+				delete values[col]; // only send changed data
+			}
+		}
 		
 		this._willSubmit = true;
 		$.fancybox.close();

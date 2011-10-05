@@ -70,6 +70,7 @@ class DPDBInterface extends DP {
 	}
 	
 	protected function insert() {
+		self::startAction('insert');
 		$data = json_decode($_POST['insert'], true);
 		
 		$DIs = $this->Dibasic->columns;
@@ -101,12 +102,21 @@ class DPDBInterface extends DP {
 		$row = mysql_fetch_assoc($query_result);
 		$json = array();
 		$json[$row[$key]] = $row;
+		
+		$this->logForCurrentTable($row[$key], ':insert', '');
+		foreach ($row as $col => $val) {
+			if ($col == $key) { continue; }
+			$this->logForCurrentTable($row[$key], $col, $val);
+		}
+		
 		EventCenter::sharedCenter()->fire('db.inserted', $this, $json);
+		self::endAction();
 		echo json_encode($row);
 		die();
 	}
 	
 	protected function update() {
+		self::startAction('update');
 		$data = json_decode($_POST['update'], true);
 		$ids = array();
 		$key = $this->Dibasic->key;
@@ -129,6 +139,11 @@ class DPDBInterface extends DP {
 			EventCenter::sharedCenter()->fire('db.update', $this, $row);
 			
 			$row = array_intersect_key($row, $this->Dibasic->columns); // security
+			
+			if (!count($row)) {
+				continue; // nothing to update
+			}
+			
 			foreach ($row as $col => $val) {
 				if ($col == $key) { continue; }
 				if ($values) { $values .= ', '; }
@@ -137,6 +152,11 @@ class DPDBInterface extends DP {
 			
 			$query = "UPDATE `{$this->Dibasic->tableName}` SET $values WHERE `$key` = ".(int)$id." LIMIT 1;";
 			mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+			
+			foreach ($row as $col => $val) {
+				if ($col == $key) { continue; }
+				$this->logForCurrentTable($id, $col, $val);
+			}
 		}
 		
 		$json = array();
@@ -153,11 +173,13 @@ class DPDBInterface extends DP {
 		}
 		
 		EventCenter::sharedCenter()->fire('db.updated', $this, $json);
+		self::endAction();
 		echo json_encode($json);
 		die();
 	}
 	
 	protected function remove() {
+		self::startAction('remove');
 		$ids = $_POST['remove'];
 		$key = $this->Dibasic->key;
 		if (!preg_match('/\d+(,\d+)*/', $ids)) {
@@ -187,8 +209,65 @@ class DPDBInterface extends DP {
 		$query = "DELETE FROM `{$this->Dibasic->tableName}` WHERE `{$key}` IN ($ids)";
 		$query_result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 		
-		EventCenter::sharedCenter()->fire('db.deleted', $this, $json);
+		foreach ($ids_arr as $id) {
+			$this->logForCurrentTable($id, ':delete', '');
+		}
 		
+		EventCenter::sharedCenter()->fire('db.deleted', $this, $json);
+		self::endAction();
 		echo json_encode($ids_arr);
+	}
+	
+	private static $currentAction;
+	private static $runningActions = 0;
+	
+	public static function startAction($name) {
+		self::$runningActions++;
+		if (self::$currentAction !== null) {
+			return;
+		}
+		
+		global $user;
+		$q = sprintf("INSERT INTO `".DIBASIC_DB_PREFIX."actions` (`name`, `author`, `timestamp`)
+		VALUES ('%s', '%s', UTC_TIMESTAMP())", $name, $user['id']);
+		mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
+		
+		self::$currentAction = mysql_insert_id();
+	}
+	
+	protected function logForCurrentTable($id, $key, $value) {
+		self::log($this->Dibasic->tableName, $id, $key, $value);
+	}
+	
+	public static function log($tableName, $id, $key, $value) {
+		global $user;
+		
+		$endAction = false;
+		if (!self::$currentAction) {
+			self::startAction('');
+			$endAction = true;
+		}
+		
+		$q = sprintf("INSERT INTO `".DIBASIC_DB_PREFIX."log`
+				(`action_id`, `table`, `table_id`, `key`, `value`)
+				VALUES ('%d', '%s', '%d', '%s', '%s')",
+				mysql_real_escape_string(self::$currentAction),
+				mysql_real_escape_string($tableName),
+				mysql_real_escape_string($id),
+				mysql_real_escape_string($key),
+				mysql_real_escape_string($value)
+			);
+		mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
+		
+		if ($endAction) {
+			self::endAction();
+		}
+	}
+	
+	public static function endAction() {
+		self::$runningActions--;
+		if (self::$runningActions == 0) {
+			self::$currentAction = null;
+		}
 	}
 }

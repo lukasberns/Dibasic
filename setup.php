@@ -29,6 +29,24 @@ if (!table_exists(DIBASIC_DB_PREFIX.'users')) {
 	require(DIBASIC_ROOT.'/pages/_users.php');
 }
 
+if (!table_exists(DIBASIC_DB_PREFIX.'actions')) {
+	// this creates the tables for us
+	$_GET['action'] = 'DPCreateForm';
+	$_POST['key'] = 'id';
+	header('Location: setup.php'); // reload browser as DPCreateForm will die()
+	
+	require(DIBASIC_ROOT.'/pages/_actions.php');
+}
+
+if (!table_exists(DIBASIC_DB_PREFIX.'log')) {
+	// this creates the tables for us
+	$_GET['action'] = 'DPCreateForm';
+	$_POST['key'] = 'id';
+	header('Location: setup.php'); // reload browser as DPCreateForm will die()
+	
+	require(DIBASIC_ROOT.'/pages/_log.php');
+}
+
 $q = "SELECT COUNT(*) FROM `".DIBASIC_DB_PREFIX."users`";
 $qr = mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
 if (mysql_result($qr, 0) == '0') {
@@ -66,7 +84,7 @@ if (!table_exists(DIBASIC_DB_PREFIX.'page_to_user')) {
 	)";
 	mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
 	
-	$q = "INSERT INTO $permissionsTable (user, page) VALUES (1, 1), (1, 2)";
+	$q = "INSERT INTO $permissionsTable (user, page) VALUES (1, 1), (1, 2), (1, 3), (1, 4)";
 	mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
 }
 
@@ -75,7 +93,9 @@ if (!table_exists(DIBASIC_DB_PREFIX.'page_to_user')) {
 
 $pages = array(
 	array('title'=>'Accounts', 'file'=>'_users.php', 'file_for_permissionless'=>'_ownUser.php', 'order'=>1),
-	array('title'=>'Pages', 'file'=>'_pages.php', 'file_for_permissionless'=>'', 'order'=>2)
+	array('title'=>'Pages', 'file'=>'_pages.php', 'file_for_permissionless'=>'', 'order'=>2),
+	array('title'=>'Actions', 'file'=>'_actions.php', 'file_for_permissionless'=>'', 'order'=>3),
+	array('title'=>'Log', 'file'=>'_log.php', 'file_for_permissionless'=>'', 'order'=>4)
 );
 
 foreach ($pages as $page) {

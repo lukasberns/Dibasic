@@ -21,6 +21,9 @@ class DI {
 		if ($options) {
 			$this->options = $options;
 		}
+		if (isset($this->options['dataType'])) {
+			$this->dataType = $this->options['dataType'];
+		}
 		$this->init();
 	}
 	

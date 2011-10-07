@@ -162,7 +162,9 @@ class Dibasic {
 			$this->setDataRenderer('DataTable');
 		}
 		
-		$this->checkDBTable();
+		if ($this->tableName) {
+			$this->checkDBTable();
+		}
 		
 		if (!$this->mainStructure) {
 			ob_start();

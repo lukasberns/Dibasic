@@ -90,7 +90,7 @@ Class("DPUpdateForm", DPAddForm, {
 		var col;
 		for (i = 0; col = Dibasic.columns[i]; i++) {
 			var widget = col.DI.widget(this.className);
-			if (widget !== false) {
+			if (widget !== false && !col.hide) {
 				$('<li />').append(widget).appendTo(ul);
 			}
 		}

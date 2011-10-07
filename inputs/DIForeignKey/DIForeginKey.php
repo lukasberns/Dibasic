@@ -15,13 +15,13 @@ class DIForeignKey extends DISelect {
 			trigger_error('Please provide the "column" option for DIForeignKey', E_USER_ERROR);
 		}
 		
+		$this->table = $this->getOption('table');
 		$order = $this->getOption('order');
 		if (!$order) {
-			$order = 'id';
+			$order = "$this->table.id";
 		}
 		$this->order = self::parseOrderColumn($order);
 		
-		$this->table = $this->getOption('table');
 		$columns = $this->getOption('column');
 		if (!is_array($columns)) {
 			$columns = array($columns);
@@ -53,6 +53,15 @@ class DIForeignKey extends DISelect {
 		return implode(', ', $q);
 	}
 	
+	public function escapeColumnNames($col) {
+		if (is_array($col)) {
+			$col = $col[0]; // second element is callback in this case
+		}
+		
+		$col = preg_replace('/[^0-9a-z\-_\.]/i', '', $col);
+		return '`'.str_replace('.', '`.`', $col).'` AS `'.str_replace('.', '.', $col).'`';
+	}
+	
 	public function getSelectOptions() {
 		$exists_q = mysql_query("SHOW TABLES LIKE '$this->table'") or trigger_error(mysql_error(), E_USER_ERROR);
 		$tableExists = mysql_num_rows($exists_q) > 0;
@@ -64,7 +73,14 @@ class DIForeignKey extends DISelect {
 			return array( 0 => "DIForeignKey ($this->columnName): Table $this->table does not exist.");
 		}
 		
-		$q = "SELECT * FROM `$this->table` ORDER BY $this->order";
+		$select = array_merge(array("$this->table.id"), $this->columns);
+		$select = implode(',', array_map(array($this, 'escapeColumnNames'), $select));
+		
+		$join = $this->getOption('join');
+		if ($join) {
+			$join = "JOIN $join";
+		}
+		$q = "SELECT $select FROM `$this->table` $join ORDER BY $this->order";
 		$qr = mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
 		
 		$options = array();
@@ -78,8 +94,16 @@ class DIForeignKey extends DISelect {
 			$v = array();
 			$missing = array();
 			foreach ($this->columns as $col) {
+				$callback = '';
+				if (is_array($col)) {
+					list($col, $callback) = $col;
+				}
+				
 				if (!isset($r[$col])) {
 					$missing [] = $col;
+				}
+				else if ($callback) {
+					$v[] = call_user_func($callback, $r[$col]);
 				}
 				else {
 					$v[] = $r[$col];
@@ -89,7 +113,7 @@ class DIForeignKey extends DISelect {
 					return array(0 => 'The column(s) "'.implode('", "', $missing).'" provided by the "column" option was/were not found in the table '.$this->table);
 				}
 			}
-			$options[$r['id']] = implode(', ', $v);
+			$options[$r["$this->table.id"]] = implode(', ', $v);
 		}
 		
 		return $options;

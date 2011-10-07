@@ -228,8 +228,8 @@ class DPDBInterface extends DP {
 		}
 		
 		global $user;
-		$q = sprintf("INSERT INTO `".DIBASIC_DB_PREFIX."actions` (`name`, `author`, `timestamp`)
-		VALUES ('%s', '%s', UTC_TIMESTAMP())", $name, $user['id']);
+		$q = sprintf("INSERT INTO `".DIBASIC_DB_PREFIX."actions` (`name`, `author_id`, `page_id`, `timestamp`)
+		VALUES ('%s', '%s', '%d', UTC_TIMESTAMP())", $name, $user['id'], DIBASIC_PAGE_ID);
 		mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
 		
 		self::$currentAction = mysql_insert_id();

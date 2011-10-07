@@ -15,6 +15,8 @@ if (isset($_GET['page']) && $_GET['page']) {
 	$page = (int) $_GET['page']; // the (int) is important for security
 	$userId = (int) $user['id'];
 	
+	define('DIBASIC_PAGE_ID', $page);
+	
 	$q = "SELECT * FROM `".DIBASIC_DB_PREFIX."pages` WHERE id = '$page' LIMIT 1";
 	$qr = mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
 	$page_info = mysql_fetch_assoc($qr);

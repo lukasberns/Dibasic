@@ -10,6 +10,15 @@ Display entries in a table
 (function($) {
 
 Class("DPDataTable", DPDataTemplate, {
+	init: function($super, def) {
+		$super(def);
+		
+		if (!this.definition.controls) {
+			this.definition.controls = ['DPUpdateForm', 'DPDeleteForm'];
+		}
+		this.definition.controlsColumnWidth = 75*this.definition.controls.length;
+	},
+	
 	widget: function() {
 		this.table = $('<table id="DPDataTable" />');
 		var thead = $('<thead />').appendTo(this.table);
@@ -29,7 +38,10 @@ Class("DPDataTable", DPDataTemplate, {
 			var title = col.title;
 			$('<th />').append(title).appendTo(thead);
 		}
-		$('<th />').addClass('controlsColumn').appendTo(thead); // for buttons
+		$('<th />')
+			.addClass('controlsColumn')
+			.css('width', this.definition.controlsColumnWidth)
+			.appendTo(thead); // for buttons
 		
 		this.getData();
 		
@@ -55,9 +67,14 @@ Class("DPDataTable", DPDataTemplate, {
 					$('<td/>').append(DI.render(row[name], id, data)).appendTo(tr);
 				}
 				var buttonWrapper = $('<div class="segmented"/>').css('opacity', 0.5);
-				buttonWrapper.append(Dibasic.DPUpdateForm.widget(id));
-				buttonWrapper.append(Dibasic.DPDeleteForm.widget(id));
-				$('<td/>').addClass('controlsColumn').append(buttonWrapper).appendTo(tr);
+				for (var c in self.definition.controls) {
+					buttonWrapper.append(Dibasic[self.definition.controls[c]].widget(id));
+				}
+				$('<td/>')
+					.addClass('controlsColumn')
+					.css('width', self.definition.controlsColumnWidth)
+					.append(buttonWrapper)
+					.appendTo(tr);
 				tr.appendTo(self.tbody);
 				
 				tr.hover(function() {

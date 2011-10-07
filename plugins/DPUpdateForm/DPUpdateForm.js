@@ -21,19 +21,20 @@ Class("DPUpdateForm", DPAddForm, {
 		$(window).bind('hashchange', function() {
 			var id = $.bbq.getState(self.className);
 			
-			if (!Dibasic.hasPermission('update', id)) {
-				id = null;
-			}
+			Dibasic.hasPermission('update', id, function(hasPermission) {
+				if (!hasPermission) {
+					id = null;
+					// in case this function ran asynchronously
+					if (self._isOpen) {
+						$.fancybox.close();
+					}
+				}
+			});
 			
 			if (id) {
 				Dibasic.DPDBInterface.getData(id, function(data) {
 					$.fancybox(self.initForm(data), self._fancyboxOptions());
 				});
-			}
-			else {
-				if (self._isOpen) {
-					$.fancybox.close();
-				}
 			}
 		});
 	},
@@ -49,12 +50,21 @@ Class("DPUpdateForm", DPAddForm, {
 	},
 	
 	widget: function(id) {
-		if (!Dibasic.hasPermission('update', id)) {
+		var hasP = true; // default to display, remove if hasPermission runs asynchronously
+		var button;
+		Dibasic.hasPermission('update', id, function(hasPermission) {
+			hasP = hasPermission;
+			if (button && !hasPermission) {
+				button.remove();
+			}
+		});
+		
+		if (!hasP) {
 			return null;
 		}
 		
 		var self = this;
-		return $('<input type="button" value="Update" />').click(function() {
+		return button = $('<input type="button" value="Update" />').click(function() {
 			var state = {};
 			state[self.className] = id;
 			$.bbq.pushState(state);

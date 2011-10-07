@@ -11,12 +11,21 @@ Form to create the table
 
 Class("DPCreateForm", DP, {
 	widget: function() {
-		if (!Dibasic.hasPermission('create')) {
+		var hasP = true;
+		var button;
+		Dibasic.hasPermission('create', function(hasPermission) {
+			hasP = hasPermission;
+			if (button && !hasPermission) {
+				button.remove();
+			}
+		});
+		
+		if (!hasP) {
 			return null;
 		}
 		
 		var self = this;
-		return $('<input type="button" value="Create" />').click(function() {
+		return button = $('<input type="button" value="Create" />').click(function() {
 			$.fancybox(self.initForm(), {
 				hideOnContentClick: false,
 				enableKeyboardNavigation: false,

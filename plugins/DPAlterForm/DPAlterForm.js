@@ -11,12 +11,21 @@ Form to alter the table
 
 Class("DPAlterForm", DP, {
 	widget: function() {
-		if (!Dibasic.hasPermission('alter')) {
+		var hasP = true;
+		var button;
+		Dibasic.hasPermission('alter', function(hasPermission) {
+			hasP = hasPermission;
+			if (button && !hasPermission) {
+				button.remove();
+			}
+		});
+		
+		if (!hasP) {
 			return null;
 		}
 		
 		var self = this;
-		return $('<input type="button" value="Alter" />').click(function() {
+		return button = $('<input type="button" value="Alter" />').click(function() {
 			$.fancybox(self.initForm(), {
 				hideOnContentClick: false,
 				overlayShow: true

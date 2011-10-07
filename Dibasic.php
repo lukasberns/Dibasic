@@ -149,6 +149,11 @@ class Dibasic {
 			}
 		}
 		
+		if (isset($_GET['permissions'])) {
+			echo json_encode($this->permissions);
+			return;
+		}
+		
 		if ($this->disableFading) {
 			Dibasic::import('disableFading.js');
 		}

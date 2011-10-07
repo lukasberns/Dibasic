@@ -23,6 +23,8 @@ Class("DPDBInterface", DP, {
 	
 	getData: function(/* id [, callback] || ids [, callback] || from, to [, callback] */) {
 		var ids, callback;
+		var self = this;
+		
 		if (typeof arguments[1] == 'number') {
 			// from, to
 			ids = [];
@@ -55,58 +57,62 @@ Class("DPDBInterface", DP, {
 			}
 		}
 		
-		if (!Dibasic.hasPermission('select')) {
-			finish([]);
-			return;
-		}
-		
-		i = 0;
-		for (i in ids) {
-			var id = ids[i];
-			if (!Dibasic.hasPermission('select', id)) {
-				continue;
+		Dibasic.hasPermission('select', function(hasPermission) {
+			if (!hasPermission) {
+				finish([]);
+				return;
+			}
+
+			i = 0;
+			for (i in ids) {
+				var id = ids[i];
+				Dibasic.hasPermission('select', id, function(hasPermission) {
+					// hasPermission works synchronously if permissions have been fetched before
+					if (!hasPermission) {
+						return;
+					}
+
+					if (self._data[id] !== undefined) {
+						data[id] = $.extend({}, self._data[id]); // clone the object
+					}
+					else {
+						if (self._waitingFor[id]) {
+							waitFor.push(id);
+						}
+						else {
+							missingIds.push(id);
+						}
+					}
+				});
 			}
 			
-			if (this._data[id] !== undefined) {
-				data[id] = $.extend({}, this._data[id]); // clone the object
+			if (missingIds.length == 0 && waitFor.length == 0) {
+				finish(data);
+				return;
 			}
-			else {
-				if (this._waitingFor[id]) {
-					waitFor.push(id);
+			/* else: */
+			// get missing data
+			
+			var waiter = self._makeWaiter(missingIds.concat(waitFor), data, finish);
+			self.observe(waiter, true);
+			
+			if (missingIds.length != 0) {
+				for (i in missingIds) {
+					self._waitingFor[missingIds[i]] = true;
 				}
-				else {
-					missingIds.push(id);
-				}
+				$.post(Dibasic.url({action:'DPDBInterface'}), {'get':missingIds.join(',')}, function(missingData, textStatus) {
+					if (!missingData[0].match(/[\{\[]/)) {
+						alert('DPDBInterface.getData() error: The server returned an unexpected output:\n\n“'+missingData+'”');
+					}
+					missingData = JSON.parse(missingData);
+					for (var id in missingData) {
+						self._data[id] = missingData[id];
+						delete self._waitingFor[id];
+					}
+					self._fire(missingData);
+				});
 			}
-		}
-	
-		if (missingIds.length == 0 && waitFor.length == 0) {
-			finish(data);
-			return;
-		}
-		/* else: */
-		// get missing data
-	
-		var waiter = this._makeWaiter(missingIds.concat(waitFor), data, finish);
-		this.observe(waiter, true);
-	
-		if (missingIds.length != 0) {
-			var self = this;
-			for (i in missingIds) {
-				this._waitingFor[missingIds[i]] = true;
-			}
-			$.post(Dibasic.url({action:'DPDBInterface'}), {'get':missingIds.join(',')}, function(missingData, textStatus) {
-				if (!missingData[0].match(/[\{\[]/)) {
-					alert('DPDBInterface.getData() error: The server returned an unexpected output:\n\n“'+missingData+'”');
-				}
-				missingData = JSON.parse(missingData);
-				for (var id in missingData) {
-					self._data[id] = missingData[id];
-					delete self._waitingFor[id];
-				}
-				self._fire(missingData);
-			});
-		}
+		});
 	},
 	
 	setData: function(/* id, data || data */) {
@@ -134,6 +140,7 @@ Class("DPDBInterface", DP, {
 	insert: function(data, callback, errorCallback) {
 		// you don’t know the id yet, so data is e.g. just {name: 'John'}
 		var self = this;
+		delete Dibasic.permissions;
 		$.post(Dibasic.url({action:'DPDBInterface'}), {'insert':JSON.stringify(data)}, function(data, textStatus) {
 			if (data[0] != '{') {
 				// not json, error
@@ -159,6 +166,7 @@ Class("DPDBInterface", DP, {
 	
 	update: function(data, callback, errorCallback) {
 		var self = this;
+		delete Dibasic.permissions;
 		for (var id in data) {
 			this._waitingFor[id] = true;
 			delete this._data[id];

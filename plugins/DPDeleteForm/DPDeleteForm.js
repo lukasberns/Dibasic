@@ -17,12 +17,21 @@ Class("DPDeleteForm", DP, {
 	},
 	
 	widget: function(id) {
-		if (!Dibasic.hasPermission('delete', id)) {
+		var hasP = true; // default to display, remove if hasPermission runs asynchronously
+		var button;
+		Dibasic.hasPermission('update', id, function(hasPermission) {
+			hasP = hasPermission;
+			if (button && !hasPermission) {
+				button.remove();
+			}
+		});
+		
+		if (!hasP) {
 			return null;
 		}
 		
 		var self = this;
-		return $('<input type="button" value="Delete" />').click(function() {
+		return button = $('<input type="button" value="Delete" />').click(function() {
 			Dibasic.DPDBInterface.getData(id, function(data) {
 				$.fancybox(self.initForm(data), {
 					hideOnContentClick: false,

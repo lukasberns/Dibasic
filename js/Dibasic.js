@@ -84,15 +84,49 @@ Dibasic.url = function(getParams) {
 	return url.substr(0, url.length-1);
 };
 
-Dibasic.hasPermission = function(action, id) {
+/**
+ * Check if user has permissions to perform a specific action
+ * 
+ * Since permissions need to be refetched after inserts and updates,
+ * the callback maybe called asynchronously. In case the permissions
+ * don't need to be refetched, the callback runs synchronously. Thus
+ * you can be sure it will run synchronously when being called inside
+ * a hasPermission-callback
+ * 
+ * The value passed to the callback is a boolean if the id was specified,
+ * but it might be an array containing the permitted ids if id was not
+ * specified. In either case, a simple falsiness check works fine.
+ *
+ * @param string action One of "select", "insert", "update", "delete", "create", "alter"
+ * @param int id (optional) The id to check the permissions for. These overrule the generic permissions
+ * @param function callback A callback in the form function(bool hasPermission) { ... }
+ * @return void
+ */
+Dibasic.hasPermission = function(action, /* optional: */ id, callback) {
+	if (!Dibasic.permissions) {
+		// need to refetch permissions
+		$.get(Dibasic.url({ permissions: true }), function(ps) {
+			Dibasic.permissions = ps;
+			Dibasic.hasPermission(action, id, callback);
+		}, 'json');
+		return;
+	}
+	
 	var p = Dibasic.permissions[action];
 	
 	if (!p) {
-		return false;
+		callback(false);
+		return;
+	}
+	
+	if ($.isFunction(id)) {
+		callback = id;
+		id = undefined;
 	}
 	
 	if (id !== undefined && Dibasic.deny[action] && $.inArray(id-0, Dibasic.deny[action]) > -1) {
-		return false;
+		callback(false);
+		return;
 	}
 	
 	switch (action) {
@@ -101,11 +135,13 @@ Dibasic.hasPermission = function(action, id) {
 		// you can't update or delete entries you don't have select permission for
 		var select = Dibasic.permissions.select;
 		if (!select) {
-			return false;
+			callback(false);
+			return;
 		}
 		
 		if (id !== undefined && $.inArray(id-0, Dibasic.deny.select) > -1) {
-			return false;
+			callback(false);
+			return;
 		}
 		
 		if ($.isArray(select) && $.inArray(id-0, select) == -1) {
@@ -132,12 +168,14 @@ Dibasic.hasPermission = function(action, id) {
 	
 	if (id === undefined) {
 		// generic permission test. might be forbidden for specific ids though
-		return p;
+		callback(p);
+		return;
 	}
 	
 	if ($.isArray(p) && $.inArray(id-0, p) == -1) {
-		return false;
+		callback(false);
+		return;
 	}
 	
-	return true;
+	callback(true);
 };

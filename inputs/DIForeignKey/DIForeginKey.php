@@ -80,7 +80,17 @@ class DIForeignKey extends DISelect {
 		if ($join) {
 			$join = "JOIN $join";
 		}
-		$q = "SELECT $select FROM `$this->table` $join ORDER BY $this->order";
+		
+		$where = $this->getOption('where');
+		if ($where) {
+			if (is_array($where)) {
+				$replacements = array_slice($where, 1);
+				$where = vsprintf($where[0], $replacements);
+			}
+			$where = ' WHERE '.$where;
+		}
+		
+		$q = "SELECT $select FROM `$this->table` $join $where ORDER BY $this->order";
 		$qr = mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
 		
 		$options = array();

@@ -22,7 +22,7 @@ Class("DISelect", DI, {
 		for (var i in opts) {
 			$('<option />', {
 				'text': opts[i],
-				'value': i
+				'value': i.substr(1)
 			}).appendTo(this._el);
 		}
 		this.setDefault();
@@ -47,7 +47,7 @@ Class("DISelect", DI, {
 	
 	render: function(data) {
 		// how the dataRenderer should render the data (text || jQuery obj)
-		return this.definition.options[data] || data;
+		return this.definition.options['_'+data] || data;
 	}
 	
 });

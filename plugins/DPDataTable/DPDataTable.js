@@ -43,7 +43,7 @@ Class("DPDataTable", DPDataTemplate, {
 			.css('width', this.definition.controlsColumnWidth)
 			.appendTo(thead); // for buttons
 		
-		this.getData();
+		this.displayData();
 		
 		return this.table;
 	},

@@ -328,6 +328,10 @@ Class("DPDataTemplate", DP, {
 		this.getTotalCount(function(totalCount) {
 			var pager = $('<div/>').addClass('DPDataTemplatePager');
 			
+			if (!totalCount) {
+				pager.text('No entries found');
+			}
+			
 			if (totalCount <= self.perpage) {
 				// if there’d be only one page, return an empty pager as it doesn’t make sense to show one page
 				callback(pager);

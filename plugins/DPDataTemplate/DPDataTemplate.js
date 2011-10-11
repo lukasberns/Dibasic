@@ -207,6 +207,21 @@ Class("DPDataTemplate", DP, {
 							callback(data);
 						}
 					});
+				})
+				.error(function(errorInfo) {
+					try {
+						var json = JSON.parse(errorInfo.responseText);
+						
+						self._ids = [];
+						Dibasic.DPDBInterface.getData(self._ids, function(data) {
+							if ($.isFunction(callback)) {
+								callback(data);
+							}
+						});
+					}
+					catch (e) {
+						console && console.log(e);
+					}
 				});
 		});
 	},
@@ -291,6 +306,19 @@ Class("DPDataTemplate", DP, {
 				self._totalCountFetchedTime = new Date().getTime();
 				if ($.isFunction(callback)) {
 					callback(self._totalCount);
+				}
+			}).error(function(errorInfo, textStatus) {
+				try {
+					var json = JSON.parse(errorInfo.responseText);
+					
+					self._totalCount = 0;
+					self._totalCountFetchedTime = new Date().getTime();
+					if ($.isFunction(callback)) {
+						callback(self._totalCount);
+					}
+				}
+				catch (e) {
+					console && console.log(e);
 				}
 			});
 		}

@@ -61,8 +61,7 @@ class Dibasic {
 		Dibasic::$cssDir = DIBASIC_URL.'/css/';
 		
 		$this->import('json2.js');
-		$this->import('jquery-1.4.0.js');
-//		$this->import('jquery-1.4.0.min.js');
+		$this->import('jquery-1.6.4.min.js');
 		$this->import('jquery-ui-1.8rc1.custom.min.js');
 		$this->import('custom-theme/jquery-ui-1.8rc1.custom.css');
 		

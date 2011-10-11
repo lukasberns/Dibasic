@@ -19,7 +19,7 @@ Class("DPDeleteForm", DP, {
 	widget: function(id) {
 		var hasP = true; // default to display, remove if hasPermission runs asynchronously
 		var button;
-		Dibasic.hasPermission('update', id, function(hasPermission) {
+		Dibasic.hasPermission('delete', id, function(hasPermission) {
 			hasP = hasPermission;
 			if (button && !hasPermission) {
 				button.remove();

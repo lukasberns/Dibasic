@@ -31,10 +31,10 @@ Class("DICheckbox", DI, {
 		// get or set the value
 		// change _el’s value es well
 		if (typeof value != 'undefined') {
-			this._el.attr('checked', value-0); // `-0` to convert to int
+			this._el.prop('checked', value-0); // `-0` to convert to int
 			return this;
 		}
-		return this._el.attr('checked');
+		return this._el.prop('checked');
 	},
 
 	render: function(data) {
@@ -44,7 +44,7 @@ Class("DICheckbox", DI, {
 			disabled: true
 		});
 		if (data-0) {
-			el.attr('checked', true);
+			el.prop('checked', true);
 		}
 		return el;
 	}

@@ -131,6 +131,13 @@ class DIForeignKey extends DISelect {
 	
 	public function act() {
 		// refresh
-		echo json_encode($this->getSelectOptions());
+		$pre_options = $this->getSelectOptions();
+		
+		// we need to prefix keys to support numeric keys
+		$options = array();
+		foreach ($pre_options as $k => $v) {
+			$options['_'.$k] = $v;
+		}
+		echo json_encode($options);
 	}
 }

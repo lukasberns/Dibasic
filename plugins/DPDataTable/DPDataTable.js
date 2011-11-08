@@ -16,7 +16,7 @@ Class("DPDataTable", DPDataTemplate, {
 		if (!this.definition.controls) {
 			this.definition.controls = ['DPUpdateForm', 'DPDeleteForm'];
 		}
-		this.definition.controlsColumnWidth = 75*this.definition.controls.length;
+		this.definition.controlsColumnWidth = 90*this.definition.controls.length - 20;
 	},
 	
 	widget: function() {

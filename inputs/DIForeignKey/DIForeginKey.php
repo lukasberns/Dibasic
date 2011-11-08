@@ -97,7 +97,7 @@ class DIForeignKey extends DISelect {
 		
 		$rules = $this->getOption('rules');
 		if (strpos($rules, 'required') === false or (is_array($rules) and in_array('required', $rules))) {
-			$options[0] = '— none —';
+			$options[0] = '—';
 		}
 		
 		while ($r = mysql_fetch_assoc($qr)) {

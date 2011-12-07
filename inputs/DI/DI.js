@@ -30,7 +30,7 @@ Class("DI", {
 		this.definition = definition || {};
 	},
 	
-	widget: function(formName) {
+	widget: function(formName, id) {
 		// the widget (a jQuery object) displayed in forms
 		return this._el = null;
 	},

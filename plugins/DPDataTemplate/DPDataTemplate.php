@@ -42,6 +42,9 @@ class DPDataTemplate extends DP {
 		// this function is just for display preferences, so it doesn't work for display permission management
 		
 		$replacements = array_splice(func_get_args(), 2);
+		foreach ($replacements as &$r) {
+			$r = mysql_real_escape_string($r);
+		}
 		$this->where[$title] = vsprintf($condition, $replacements);
 		$this->options['filterOptions'][] = $title;
 	}

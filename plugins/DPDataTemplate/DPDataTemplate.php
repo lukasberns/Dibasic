@@ -3,10 +3,25 @@
 class DPDataTemplate extends DP {
 	protected $order = array();
 	protected $where = array();
+	protected $join = array();
+	
+	public $tableAlias = null;
 	
 	public function init() {
 		$this->options['sortOptions'] = array();
 		$this->options['filterOptions'] = array();
+	}
+	
+	public function join($statement /* , $replacements, ... */) {
+		// $statement should be the SQL join statement (including JOIN .. ON)
+		// this will be sprintf formatted, with all replacements being escaped.
+		// e.g. ->join('fruit ON fruit.id = juice.fruit_id AND fruit.country', 'Japan')
+		// 
+		// calling this function multiple times keeps appending the result to the chain
+		
+		$replacements = array_splice(func_get_args(), 2);
+		array_walk($replacements, 'mysql_real_escape_string');
+		$this->join[] = vsprintf($statement, $replacements);
 	}
 	
 	public function order($title /*, $column1, $column2, ... */) {
@@ -26,7 +41,7 @@ class DPDataTemplate extends DP {
 		$order = array();
 		foreach ($args as $c) {
 			$direction = ($c[0] != '-' ? 'ASC' : 'DESC');
-			$order[] = '`'.substr($c, $c[0] == '-')."` $direction";
+			$order[] = '`'.str_replace('.', '`.`', substr($c, $c[0] == '-'))."` $direction";
 		}
 		$this->order[$title] = implode(',', $order);
 		
@@ -66,7 +81,19 @@ class DPDataTemplate extends DP {
 	
 	public function getData() {
 		// returns ids
-		$query = "SELECT `{$this->Dibasic->key}` FROM `{$this->Dibasic->tableName}`";
+		
+		$tableName = $this->Dibasic->tableName;
+		if ($this->tableAlias) {
+			$tableName = $this->tableAlias;
+		}
+		
+		$query = "SELECT `{$tableName}`.`{$this->Dibasic->key}` FROM `{$this->Dibasic->tableName}`";
+		
+		if ($this->tableAlias) {
+			$query .= " AS `{$this->tableAlias}`";
+		}
+		
+		$query .= $this->getJoinStatement();
 		$query .= $this->getWhereCondition();
 		if (count($this->order)) {
 			if (isset($_GET['sortBy']) and isset($this->options['sortOptions'][$_GET['sortBy']])) {
@@ -102,6 +129,10 @@ class DPDataTemplate extends DP {
 		echo mysql_result($query_result, 0);
 		
 		die();
+	}
+	
+	public function getJoinStatement() {
+		return ' '.implode(' ', $this->join).' ';
 	}
 	
 	public function getWhereCondition() {

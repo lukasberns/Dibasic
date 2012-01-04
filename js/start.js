@@ -22,6 +22,16 @@ var fancyCache = {
 	data: {}
 };
 
+var fancyboxCenter = $.fancybox.center;
+$.fancybox.center = function() {
+	/* if its iphone or ipod disregard alignment and dont center */
+	if ((navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i))) {
+	    return ; 
+	}
+	
+	fancyboxCenter.apply(this, arguments);
+};
+
 $(function() {
 	Dibasic.start();
 	$(':button').live('click', function() {

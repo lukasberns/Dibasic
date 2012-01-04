@@ -24,8 +24,8 @@ var fancyCache = {
 
 var fancyboxCenter = $.fancybox.center;
 $.fancybox.center = function() {
-	/* if its iphone or ipod disregard alignment and dont center */
-	if ((navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i))) {
+	/* if its iOS or Android disregard alignment and dont center */
+	if (navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/Android/i)) {
 	    return ; 
 	}
 	

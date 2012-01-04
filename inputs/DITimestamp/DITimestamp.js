@@ -11,7 +11,7 @@ Always up to date
 
 Class("DITimestamp", DI, {
 	widget: function() { return false; },
-	val: function(value) { return 0; } /* We need to return some non-null value, otherwise DPDBInterface doesn’t call processData on the DITimestamp php class */
+	val: function(value) { return new Date().getTime(); } /* We need to return some always changing value, otherwise DPDBInterface doesn’t call processData on the DITimestamp php class */
 });
 
 })(jQuery);

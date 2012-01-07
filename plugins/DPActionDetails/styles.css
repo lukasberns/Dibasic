@@ -1,7 +1,7 @@
 
 .DPActionDetails {
 	margin: 2em;
-	width: 300px;
+	width: 500px;
 }
 
 .DPActionDetails h1 {
@@ -18,6 +18,14 @@
 	width: 100%;
 }
 
+.DPActionDetails .nochange {
+	display: none;
+}
+
+.DPActionDetails.show-nochange .nochange {
+	display: table-row;
+}
+
 .DPActionDetails th, .DPActionDetails td {
 	border: 1px solid #ccc;
 	padding: 0.5em;
@@ -27,6 +35,16 @@
 	background: #eee;
 }
 
-.DPActionDetails .old {
-	color: gray;
+.DPActionDetails td {
+	color: #aaa;
+	white-space: pre;
+}
+
+.DPActionDetails .changed {
+	color: black;
+}
+
+.DPActionDetails label {
+	display: block;
+	margin-top: 1em;
 }

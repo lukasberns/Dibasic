@@ -13,6 +13,7 @@ class DPActionDetails extends DP {
 		$qr = mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
 		
 		$json = array();
+		
 		while ($r = mysql_fetch_assoc($qr)) {
 			if (!isset($json[$r['table']])) {
 				$json[$r['table']] = array();
@@ -40,9 +41,57 @@ class DPActionDetails extends DP {
 			$qr = mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
 			$value = mysql_num_rows($qr) ? mysql_result($qr, 0) : null;
 			$r['old'] = $value;
+			$r['changed'] = true;
 			
 			$table[$r['table_id']][] = $r;
 		}
+		
+		foreach ($json as $tableName => &$changedRows) {
+			$q = "DESCRIBE `$tableName`";
+			$qr = mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
+			$columns = array();
+			
+			while ($r = mysql_fetch_assoc($qr)) {
+				$columns[] = $r['Field'];
+			}
+			
+			foreach ($changedRows as $id => &$changedValues) {
+				$columnsWithChanges = array();
+				$biggestChangeId = 0;
+				foreach ($changedValues as $change) {
+					$columnsWithChanges[] = $change['key'];
+					$biggestChangeId = $change['id'];
+				}
+				
+				$missing = array_diff($columns, $columnsWithChanges);
+				foreach ($missing as $c) {
+					$q = sprintf(
+						"SELECT value
+						FROM `$log`
+						WHERE `table` = '%s'
+						AND table_id = '%s'
+						AND `key` = '%s'
+						AND id < '%s'
+						ORDER BY id DESC
+						LIMIT 1",
+						mysql_real_escape_string($tableName),
+						mysql_real_escape_string($id),
+						mysql_real_escape_string($c),
+						mysql_real_escape_string($biggestChangeId)
+					);
+					$qr = mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
+					$value = mysql_num_rows($qr) ? mysql_result($qr, 0) : null;
+					
+					$changedValues[] = array(
+						'changed' => false,
+						'key' => $c,
+						'old' => $value,
+						'value' => $value
+					);
+				}
+			}
+		}
+		
 		echo json_encode($json);
 	}
 }

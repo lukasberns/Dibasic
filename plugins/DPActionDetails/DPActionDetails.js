@@ -76,14 +76,40 @@ Class("DPActionDetails", DP, {
 						var logEntry = row[i];
 						var rowEl = $('<tr/>');
 						$('<th/>').text(logEntry.key).appendTo(rowEl);
-						$('<td/>').text(logEntry.old || '').addClass('old').appendTo(rowEl);
-						$('<td/>').text(logEntry.value).appendTo(rowEl);
+						$('<td/>').text(logEntry.old || '').appendTo(rowEl);
+						var c = $('<td/>').text(logEntry.value || '').appendTo(rowEl);
+						
+						if (logEntry.changed) {
+							c.addClass('changed');
+						}
+						else {
+							rowEl.addClass('nochange');
+						}
+						
 						rowEl.appendTo(tableForRow);
 					}
 					
 					tableForRow.appendTo(container);
 				}
 			}
+			
+			var showLabel = $('<label/>').text(' Show unchanged data');
+			var checkbox = $('<input type="checkbox"/>').prependTo(showLabel).change(function() {
+				if (this.checked) {
+					self.showNochange = true;
+					container.addClass('show-nochange');
+				}
+				else {
+					self.showNochange = false;
+					container.removeClass('show-nochange');
+				}
+				$.fancybox.resize();
+			});
+			if (self.showNochange) {
+				container.addClass('show-nochange');
+				checkbox.attr('checked', 'checked');
+			}
+			showLabel.appendTo(container);
 			
 			$.fancybox(container, self._fancyboxOptions());
 			$.fancybox.hideActivity();

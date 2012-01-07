@@ -24,7 +24,7 @@ class DPActionDetails extends DP {
 				$table[$r['table_id']] = array();
 			}
 			
-			$q = sprintf(
+			$value_q = sprintf(
 				"SELECT value
 				FROM `$log`
 				WHERE `table` = '%s'
@@ -38,8 +38,8 @@ class DPActionDetails extends DP {
 				mysql_real_escape_string($r['key']),
 				mysql_real_escape_string($r['id'])
 			);
-			$qr = mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
-			$value = mysql_num_rows($qr) ? mysql_result($qr, 0) : null;
+			$value_qr = mysql_query($value_q) or trigger_error(mysql_error(), E_USER_ERROR);
+			$value = mysql_num_rows($value_qr) ? mysql_result($value_qr, 0) : null;
 			$r['old'] = $value;
 			$r['changed'] = true;
 			

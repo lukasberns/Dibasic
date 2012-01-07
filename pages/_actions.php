@@ -7,6 +7,8 @@
 
 $table = new Dibasic(DIBASIC_DB_PREFIX.'actions');
 
+$table->addPlugin('ActionDetails');
+
 $table->c('name', 'Text', 'Name');
 $table->c('author_id', 'ForeignKey', 'Author', array(
 	'rules' => 'required',
@@ -24,4 +26,9 @@ $table->c('timestamp', 'Timestamp', 'Timestamp', array(
 	'setOnUpdate' => false
 ));
 
+$d = $table->setDataRenderer('DataTable', array(
+	'controls' => array('DPActionDetails')
+));
+
 $table->run();
+

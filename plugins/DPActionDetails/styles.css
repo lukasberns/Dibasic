@@ -1,0 +1,32 @@
+
+.DPActionDetails {
+	margin: 2em;
+	width: 300px;
+}
+
+.DPActionDetails h1 {
+	font-weight: bold;
+	margin: 0.5em 0;
+	font-size: 1.2em;
+}
+
+.DPActionDetails h2 {
+	margin: 0.5em 0;
+}
+
+.DPActionDetails table {
+	width: 100%;
+}
+
+.DPActionDetails th, .DPActionDetails td {
+	border: 1px solid #ccc;
+	padding: 0.5em;
+}
+
+.DPActionDetails th {
+	background: #eee;
+}
+
+.DPActionDetails .old {
+	color: gray;
+}

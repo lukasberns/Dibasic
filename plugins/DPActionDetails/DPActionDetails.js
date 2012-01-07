@@ -48,7 +48,10 @@ Class("DPActionDetails", DP, {
 		var self = this;
 		$.fancybox.showActivity();
 		
-		$.get(Dibasic.url({ action: this.className, action_id: id}), function(data) {
+		$.get(Dibasic.url({ action: this.className, action_id: id}), function(resp) {
+			var data = resp.data;
+			var isDelete = (resp.action == 'remove');
+			
 			var container = $('<div/>').addClass('DPActionDetails');
 			
 			for (var table in data) {
@@ -76,13 +79,20 @@ Class("DPActionDetails", DP, {
 						var logEntry = row[i];
 						var rowEl = $('<tr/>');
 						$('<th/>').text(logEntry.key).appendTo(rowEl);
-						$('<td/>').text(logEntry.old || '').appendTo(rowEl);
-						var c = $('<td/>').text(logEntry.value || '').appendTo(rowEl);
+						var o = $('<td/>').text(logEntry.old || '').appendTo(rowEl);
+						var c = $('<td/>').text(isDelete ? '' : (logEntry.value || '')).appendTo(rowEl);
 						
+						var changed = false;
 						if (logEntry.changed) {
 							c.addClass('changed');
+							changed = true;
 						}
-						else {
+						if (isDelete) {
+							o.addClass('changed');
+							changed = true;
+						}
+						
+						if (!changed) {
 							rowEl.addClass('nochange');
 						}
 						

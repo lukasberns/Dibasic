@@ -8,6 +8,17 @@ class DPActionDetails extends DP {
 		}
 		
 		$action_id = intval($_GET['action_id']);
+		
+		$actionsTable = DIBASIC_DB_PREFIX.'actions';
+		$q = "SELECT * FROM `$actionsTable` WHERE id = '$action_id' LIMIT 1";
+		$qr = mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
+		$action = mysql_fetch_assoc($qr);
+		
+		if (!$action) {
+			header('HTTP/1.0 404 Not Found');
+			die('Action not found.');
+		}
+		
 		$log = DIBASIC_DB_PREFIX.'log';
 		$q = "SELECT * FROM `$log` WHERE action_id = '$action_id' ORDER BY id ASC";
 		$qr = mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
@@ -92,6 +103,9 @@ class DPActionDetails extends DP {
 			}
 		}
 		
-		echo json_encode($json);
+		echo json_encode(array(
+			'data' => $json,
+			'action' => $action['name']
+		));
 	}
 }

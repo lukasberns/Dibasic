@@ -8,13 +8,17 @@
 $table = new Dibasic(DIBASIC_DB_PREFIX.'actions');
 
 $table->c('name', 'Text', 'Name');
-$table->c('author_id', 'Text', 'Author', array(
-	'dataType' => 'int',
-	'rules' => 'required'
+$table->c('author_id', 'ForeignKey', 'Author', array(
+	'rules' => 'required',
+	'table' => DIBASIC_DB_PREFIX.'users',
+	'column' => array('realname', 'username'),
+	'order' => array('realname', 'username'),
 ));
-$table->c('page_id', 'Text', 'Page', array(
-	'dataType' => 'int',
-	'rules' => 'required'
+$table->c('page_id', 'ForeignKey', 'Page', array(
+	'rules' => 'required',
+	'table' => DIBASIC_DB_PREFIX.'pages',
+	'column' => 'title',
+	'order' => 'order'
 ));
 $table->c('timestamp', 'Timestamp', 'Timestamp', array(
 	'setOnUpdate' => false

@@ -76,4 +76,13 @@ class DI {
 	public function act() {
 		// called if this DI is referenced via ?action=columnName
 	}
+	
+	/**
+	 * What condition to use when searching
+	 * @param string $query Word that is being searched for (already trimmed etc.)
+	 * @return string Where condition (without the column name)
+	 */
+	public function searchCondition($query) {
+		return 'LIKE "%'.mysql_real_escape_string($query).'%"';
+	}
 }

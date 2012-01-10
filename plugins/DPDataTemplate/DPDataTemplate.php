@@ -4,6 +4,7 @@ class DPDataTemplate extends DP {
 	protected $order = array();
 	protected $where = array();
 	protected $join = array();
+	protected $additionalSearchColumns = array();
 	
 	public $tableAlias = null;
 	
@@ -62,6 +63,20 @@ class DPDataTemplate extends DP {
 		}
 		$this->where[$title] = vsprintf($condition, $replacements);
 		$this->options['filterOptions'][] = $title;
+	}
+	
+	/**
+	 * Extend the list of columns through which to search
+	 * Useful when you are displaying ForeignKeys
+	 * @param string|array $columns A column to add or an array of columns to add. You have to escape where necessary.
+	 * @return void
+	 */
+	public function addToSearchColumns($columns) {
+		if (!is_array($columns)) {
+			$columns = array($columns);
+		}
+		
+		$this->additionalSearchColumns = array_merge($this->additionalSearchColumns, $columns);
 	}
 	
 	public function act() {
@@ -123,9 +138,17 @@ class DPDataTemplate extends DP {
 	public function getTotalCount() {
 		// will return the total number of entries
 		
-		$query = "SELECT COUNT(*) FROM {$this->Dibasic->tableName}";
+		if ($this->tableAlias) {
+			$tableName = $this->tableAlias;
+		}
+		
+		$query = "SELECT COUNT(`{$tableName}`.`{$this->Dibasic->key}`) FROM {$this->Dibasic->tableName}";
+		if ($this->tableAlias) {
+			$query .= " AS `{$this->tableAlias}`";
+		}
+		$query .= $this->getJoinStatement();
 		$query .= $this->getWhereCondition();
-		$query_result = mysql_query($query);
+		$query_result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 		echo mysql_result($query_result, 0);
 		
 		die();
@@ -137,6 +160,10 @@ class DPDataTemplate extends DP {
 	
 	public function getWhereCondition() {
 		$where = array();
+		$tableName = $this->Dibasic->tableName;
+		if ($this->tableAlias) {
+			$tableName = $this->tableAlias;
+		}
 		
 		if (count($this->where)) {
 			if (isset($_GET['filterBy']) and isset($this->options['filterOptions'][$_GET['filterBy']])) {
@@ -156,8 +183,11 @@ class DPDataTemplate extends DP {
 				$and = array();
 				foreach ($parts as $p) {
 					$or = array();
-					foreach ($this->Dibasic->columns as $col => $def) {
-						$or[] = "`$col` LIKE '%".mysql_real_escape_string($p)."%'";
+					foreach ($this->Dibasic->columns as $col => $DI) {
+						$or [] = "`{$tableName}`.`$col` ".$DI->searchCondition($p);
+					}
+					foreach ($this->additionalSearchColumns as $col) {
+						$or[] = "$col LIKE '%".mysql_real_escape_string($p)."%'";
 					}
 					if (count($or)) {
 						$and[] = '('.implode(' OR ', $or).')';
@@ -171,7 +201,7 @@ class DPDataTemplate extends DP {
 		
 		$allowed_ids = $this->Dibasic->hasPermission('select');
 		if (is_array($allowed_ids)) {
-			$where[] = "`{$this->Dibasic->key}` IN (".implode(',',array_map('intval', $allowed_ids)).")";
+			$where[] = "`{$tableName}`.`{$this->Dibasic->key}` IN (".implode(',',array_map('intval', $allowed_ids)).")";
 		}
 		
 		if (count($where)) {

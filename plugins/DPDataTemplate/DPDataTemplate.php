@@ -138,6 +138,7 @@ class DPDataTemplate extends DP {
 	public function getTotalCount() {
 		// will return the total number of entries
 		
+		$tableName = $this->Dibasic->tableName;
 		if ($this->tableAlias) {
 			$tableName = $this->tableAlias;
 		}

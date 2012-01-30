@@ -21,8 +21,8 @@ Class("DIReorder", DI, {
 			name: def.name+'_DISelect',
 			title: 'Insert at',
 			options: {
-				MIN: 'Beginnning',
-				MAX: 'End'
+				'-MIN': 'Beginnning',
+				'-MAX': 'End'
 			},
 			'default': 'MAX'
 		});

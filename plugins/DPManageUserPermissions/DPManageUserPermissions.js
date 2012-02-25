@@ -52,7 +52,7 @@ Class("DPManageUserPermissions", DP, {
 			// update; get current permissions and set them
 			$.get(Dibasic.url({ action: this.className }), { id: id }, function(data) {
 				for (var i in data) {
-					self._DIs[data[i]].val(true);
+					self._DIs[data[i]] && self._DIs[data[i]].val(true);
 				}
 				container.css('visibility', 'visible');
 			}, 'json');

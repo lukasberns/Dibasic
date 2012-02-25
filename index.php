@@ -56,7 +56,15 @@ if (isset($_GET['page']) && $_GET['page']) {
 }
 else {
 	// load the topmost page
-	$q = "SELECT id FROM `".DIBASIC_DB_PREFIX."pages` ORDER BY `order` ASC LIMIT 1";
+	$userId = (int) $user['id']; // typecasting for security
+	
+	$q = "SELECT p.id
+			FROM `".DIBASIC_DB_PREFIX."pages` p
+			JOIN `".DIBASIC_DB_PREFIX."page_to_user` pu
+			ON p.id = pu.page
+			WHERE pu.user = '$userId'
+			ORDER BY p.`order` ASC
+			LIMIT 1";
 	$qr = mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
 	header('Location: '.DIBASIC_SUPERURL.'?page='.mysql_result($qr, 0));
 	die();

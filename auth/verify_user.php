@@ -18,7 +18,7 @@ else {
 	$user = false;
 }
 
-if (!$user or !$user['valid_session_id'] or $user['session_ip'] != $_SERVER['REMOTE_ADDR']) {
+if (!$user or !$user['valid_session_id']) {
 	// session_id expired, delete the cookie and redirect to login page
 	setcookie('session_id', '', time()-3600, COOKIE_DIR);
 	

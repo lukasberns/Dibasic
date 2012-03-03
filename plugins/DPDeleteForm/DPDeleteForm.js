@@ -50,11 +50,23 @@ Class("DPDeleteForm", DP, {
 		
 		this._id = data.id;
 		Dibasic.dataRenderer.highlight(this._id);
-		var excerpt = data[Dibasic.columns[0].name];
+		
+		var candidate = null;
+		for (var i = 0, l = Dibasic.columns.length; i < l; i++) {
+			var column = Dibasic.columns[i];
+			if (!candidate && data[column.name]) {
+				candidate = column;
+			}
+			if (/^DI(Unique)?Text$/.test(column.DIName) && data[column.name]) {
+				candidate = column;
+				break;
+			}
+		}
+		var excerpt = candidate ? data[candidate.name] : null;
 		
 		var ul = $('<ul></ul>').appendTo(form);
 		$('<li>Do you really want to delete this?</li>').appendTo(ul);
-		$('<li>Excerpt: '+excerpt+'</li>').appendTo(ul);
+		if (excerpt) { $('<li>Excerpt: '+excerpt+'</li>').appendTo(ul); }
 		$('<li><input type="Submit" value="Delete" class="button" /></li>').appendTo(ul);
 		
 		form.submit(function() {

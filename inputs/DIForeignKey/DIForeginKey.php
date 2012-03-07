@@ -96,9 +96,6 @@ class DIForeignKey extends DISelect {
 		$options = array();
 		
 		$rules = $this->getOption('rules');
-		if (strpos($rules, 'required') === false or (is_array($rules) and in_array('required', $rules))) {
-			$options[0] = '—';
-		}
 		
 		while ($r = mysql_fetch_assoc($qr)) {
 			$v = array();
@@ -134,7 +131,7 @@ class DIForeignKey extends DISelect {
 		$pre_options = $this->getSelectOptions();
 		
 		// we need to prefix keys to support numeric keys
-		$options = array();
+		$options = array('_' => '—');
 		foreach ($pre_options as $k => $v) {
 			$options['_'.$k] = $v;
 		}

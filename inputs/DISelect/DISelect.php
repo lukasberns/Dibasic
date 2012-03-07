@@ -8,6 +8,7 @@ class DISelect extends DI {
 		if (!is_array($opts)) {
 			die('Please set an array for the option “options” for a DISelect.');
 		}
+		$opts = array('' => '—') + $opts;
 		
 		// we need to prefix keys to support numeric keys
 		$this->options['options'] = array(); // empty

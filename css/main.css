@@ -44,6 +44,10 @@ body {
 	margin-left: 28%;
 }
 
+.DPForm select {
+	max-width: 60%;
+}
+
 .DPForm input[type=submit] {
 	margin-left: 10px;
 	margin-top: 20px;

@@ -29,6 +29,9 @@ Class("DITime", DI, {
 			'id': id,
 			'name': name
 		}).mask(mask, {placeholder: '0'})
+		if (this.definition.placeholder) {
+			this._el.attr('placeholder', this.definition.placeholder);
+		}
 		this.setDefault();
 		
 		var label = $('<label />', {

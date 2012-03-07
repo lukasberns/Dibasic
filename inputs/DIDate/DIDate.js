@@ -25,6 +25,9 @@ Class("DIDate", DI, {
 			navigationAsDateFormat: true,
 			showOtherMonths: true
 		});
+		if (this.definition.placeholder) {
+			this._el.attr('placeholder', this.definition.placeholder);
+		}
 		this.setDefault();
 		
 		var label = $('<label />', {

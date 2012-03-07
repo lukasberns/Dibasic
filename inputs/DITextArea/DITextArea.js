@@ -20,6 +20,9 @@ Class("DITextArea", DIText, {
 		}).css({
 			height: '7em'
 		});
+		if (this.definition.placeholder) {
+			this._el.attr('placeholder', this.definition.placeholder);
+		}
 		this.setDefault();
 		
 		var label = $('<label />', {

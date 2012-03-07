@@ -19,6 +19,9 @@ Class("DIText", DI, {
 			'id': id,
 			'name': name
 		});
+		if (this.definition.placeholder) {
+			this._el.attr('placeholder', this.definition.placeholder);
+		}
 		this.setDefault();
 		
 		var label = $('<label />', {
@@ -39,7 +42,7 @@ Class("DIText", DI, {
 		if (this._elIsSet()) {
 			return this._el.val();
 		}
-		return; // i.e. undefined
+		return undefined;
 	}
 });
 

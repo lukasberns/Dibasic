@@ -21,7 +21,10 @@ Class("DITextArea", DIText, {
 			height: '7em'
 		});
 		if (this.definition.placeholder) {
-			this._el.attr('placeholder', this.definition.placeholder);
+			// we replace newlines with lots of spaces to get a "newline" effect
+			// credits to Thomas Hunter for this hack
+			// [http://stackoverflow.com/questions/7189223]
+			this._el.attr('placeholder', this.definition.placeholder.replace(/\n/g, new Array(100).join(' ')));
 		}
 		this.setDefault();
 		

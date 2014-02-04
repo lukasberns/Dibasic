@@ -511,7 +511,7 @@ ajaxFileUploader.prototype = {
 		this.segmentedControls.show().children().hide();
 		
 		this.fileNameText.val(this.uploadingFileName.replace(/^.*[\/\\]([^\/\\]*)$/, '$1'));
-		this.progressBar.css('width', 0);
+		this.progressBar.css('width', 0).show();
 		this.progressContainer.addClass('uploading').show();
 		
 		this.cancelButton.show();

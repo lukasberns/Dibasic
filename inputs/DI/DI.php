@@ -36,7 +36,7 @@ class DI {
 		$value = &$data[$this->columnName];
 		
 		// remove control chars except HT, NL, CR (09,0A,0D)
-		$value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', $value);
+		// $value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', $value);
 		
 		// validate and convert it here if necessary before saving to db
 		if (!$this->isValid($value)) {

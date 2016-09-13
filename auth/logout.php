@@ -5,7 +5,7 @@
 
 require('../loadConfig.php');
 
-$session_id = isset($_COOKIE['session_id']) ? $_COOKIE['session_id'] : '';
+$session_id = isset($_COOKIE[COOKIE_NAME]) ? $_COOKIE[COOKIE_NAME] : '';
 
 if ($session_id) {
 	$q = "UPDATE `".DIBASIC_DB_PREFIX."users` "

@@ -43,7 +43,7 @@ $d->order('', 'username');
 
 function preventOwnAccountFromDeletion($event) {
 	$row = $event->getInfo();
-	if (!isset($_COOKIE['session_id'])) {
+	if (!isset($_COOKIE[COOKIE_NAME])) {
 		return;
 	}
 	if ($row['session_id'] == $_COOKIE['session_id']) {

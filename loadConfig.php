@@ -24,3 +24,7 @@ if ($not_found):
 endif;
 
 require($config_file);
+
+if (!defined('COOKIE_NAME')) {
+	define('COOKIE_NAME', 'dibasic_session');
+}

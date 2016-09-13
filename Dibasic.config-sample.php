@@ -25,3 +25,4 @@ define('DOCUMENT_ROOT', preg_replace('|'.preg_quote($_SERVER['SCRIPT_NAME']).'$|
 define('DIBASIC_URL', substr(DIBASIC_ROOT, strlen(DOCUMENT_ROOT)).'/');
 define('DIBASIC_SUPERURL', substr(DIBASIC_SUPERROOT, strlen(DOCUMENT_ROOT)).'/');
 define('COOKIE_DIR', DIBASIC_SUPERURL); // where to save the cookies into
+define('COOKIE_NAME', 'dibasic_session'); // name of cookie used by dibasic. change if it clashes with another cookie

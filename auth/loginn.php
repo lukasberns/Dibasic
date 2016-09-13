@@ -88,7 +88,7 @@ if ($action == 'login') {
 		mysql_query($q) or trigger_error(mysql_error(), E_USER_ERROR);
 		
 		// login will be valid in the directory the Dibasic folder is in
-		setcookie('session_id', $session_id, time()+5*3600, COOKIE_DIR);
+		setcookie(COOKIE_NAME, $session_id, time()+5*3600, COOKIE_DIR);
 		
 		die('1');
 	}

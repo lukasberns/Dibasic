@@ -3,7 +3,7 @@
 // checks if user is logged in and redirects if neccessary to the login page
 // this has to be run before anything else, right after the db connection is made
 
-$session_id = isset($_COOKIE['session_id']) ? $_COOKIE['session_id'] : '';
+$session_id = isset($_COOKIE[COOKIE_NAME]) ? $_COOKIE[COOKIE_NAME] : '';
 
 if ($session_id) {
 	$q = "SELECT *, session_login_expire > NOW() AS valid_session_id "
@@ -20,7 +20,7 @@ else {
 
 if (!$user or !$user['valid_session_id']) {
 	// session_id expired, delete the cookie and redirect to login page
-	setcookie('session_id', '', time()-3600, COOKIE_DIR);
+	setcookie(COOKIE_NAME, '', time()-3600, COOKIE_DIR);
 	
 	$q = "UPDATE `".DIBASIC_DB_PREFIX."users` "
 		."SET session_id='', session_login_expire='', session_ip='' "
@@ -32,7 +32,7 @@ if (!$user or !$user['valid_session_id']) {
 	die();
 }
 else {
-	setcookie('session_id', $session_id, time()+5*3600, COOKIE_DIR);
+	setcookie(COOKIE_NAME, $session_id, time()+5*3600, COOKIE_DIR);
 	
 	$q = "UPDATE `".DIBASIC_DB_PREFIX."users` "
 		."SET session_login_expire = NOW() + INTERVAL 5 HOUR "

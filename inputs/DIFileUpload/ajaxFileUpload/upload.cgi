@@ -248,6 +248,10 @@ open (QSTR,">", "$qstring_file") or &bye_bye ("Can't open output file");
 print QSTR $qstring;
 close (QSTR);
 
+print "Cache-Control: no-cache, no-store, must-revalidate\n";
+print "Pragma: no-cache\n";
+print "Expires: 0\n";
+
 if($async_upload) {
 	print "Content-type: text/html\n\n";
 	print "<html></html>";

@@ -5,6 +5,11 @@
 
 $session_id = isset($_COOKIE[COOKIE_NAME]) ? $_COOKIE[COOKIE_NAME] : '';
 
+// disable caching
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 if ($session_id) {
 	$q = "SELECT *, session_login_expire > NOW() AS valid_session_id "
 		."FROM `".DIBASIC_DB_PREFIX."users` "

@@ -19,6 +19,11 @@
 
 require_once("read_settings.php");
 
+// disable any kind of caching
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 function bye_bye($msg) {
 	header("HTTP/1.1 500 Internal Server Error");
 	echo "$msg";

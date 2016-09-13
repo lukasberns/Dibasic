@@ -53,7 +53,7 @@ $.ajaxFileUpload = {
 	options: {
 		upload_cgi: "/cgi-bin/upload.cgi",
 		fileprogress_php: "fileprogress.php",
-		restartAfter: 5, // restart after 5 ajax responses without data
+		restartAfter: 10, // restart after 10 ajax responses without data
 		debug: false,
 		beforePopIn: function() { },
 		beforePopOut: function() { },
@@ -664,6 +664,7 @@ ajaxFileUploader.prototype = {
 				else if (data.percentDone && data.percentDone != self.previousData.percentDone) {
 					// if uploaded percentage changed
 					self.decay = 1; // reset decay
+					self.noDataCount = 0;
 					// var w = self.progress.outerWidth();
 					//  self.progress.animate({backgroundPosition: (w*parseInt(data.percentDone)/100)+"px top"});
 				}
@@ -699,6 +700,9 @@ ajaxFileUploader.prototype = {
 				self.progressBar.animate({width: data.percentDone+'%'});
 				if (!data.currentSize || data.currentSize == '0') {
 					self.noDataCount++;
+				}
+				else {
+					self.noDataCount = 0;
 				}
 				self.count++;
 				

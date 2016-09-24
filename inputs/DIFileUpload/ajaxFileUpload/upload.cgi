@@ -80,7 +80,7 @@ $async_upload = 1;
 $size = @qstring;
 if($size == 2) {
 	@p2 = split(/=/,$qstring[1]);
-	$target_url = @p2[1];
+	$target_url = $p2[1];
 	$async_upload = 0;
 }
 

@@ -25,7 +25,7 @@ if (isset($_GET['page']) && $_GET['page']) {
 		header('HTTP/1.0 404 Not Found');
 		?>
 <h1>Not Found</h1>
-<p>The page you requested (id = <?=$page?>) could not be found. Make sure the page exists in the pages editor.</p>
+<p>The page you requested (id = <?php echo $page?>) could not be found. Make sure the page exists in the pages editor.</p>
 <?php
 		die();
 	}
@@ -86,7 +86,7 @@ if (!$found) {
 	header('HTTP/1.0 404 Not Found');
 	?>
 <h1>Not Found</h1>
-<p>The page you requested could not be found, because the file “<?=$file?>” could not be found. Please check the filename in the pages editor.</p>
+<p>The page you requested could not be found, because the file “<?php echo $file?>” could not be found. Please check the filename in the pages editor.</p>
 <?php
 }
 

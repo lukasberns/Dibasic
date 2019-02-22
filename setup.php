@@ -146,7 +146,7 @@ HTACCESS
 ?>
 
 <h1>Dibasic: Setup finished.</h1>
-<p>Please login through the following url: <a href="<?=DIBASIC_SUPERURL?>">Login</a></p>
+<p>Please login through the following url: <a href="<?php echo DIBASIC_SUPERURL?>">Login</a></p>
 <dl>
 	<dt>Username:</dt>
 	<dd>admin</dd>

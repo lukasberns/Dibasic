@@ -1,4 +1,4 @@
-<?
+<?php
 
 $settingsfile = dirname(__FILE__).'/upload_settings.php';
 

@@ -57,13 +57,15 @@ class Element {
 	public function addChild($child) {
 		if (is_array($child)) {
 			$this->children = array_merge($this->children, $child);
+			return;
 		}
-		else if (get_class($child) == 'DocumentFragment') {
-			$this->children = array_merge($this->children, $child->elements);
+		if (is_object($child)) {
+			if (get_class($child) == 'DocumentFragment') {
+				$this->children = array_merge($this->children, $child->elements);
+				return;
+			}
 		}
-		else {
-			$this->children[] = $child;
-		}
+		$this->children[] = $child;
 	}
 	
 	public function __toString() {

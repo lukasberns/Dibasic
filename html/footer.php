@@ -1,3 +1,3 @@
-<?=Dibasic::getJavascripts()?>
+<?php echo Dibasic::getJavascripts()?>
 </body>
 </html>

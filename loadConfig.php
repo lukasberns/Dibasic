@@ -23,6 +23,7 @@ if ($not_found):
 	die();
 endif;
 
+require('util/fix_mysql.php');
 require($config_file);
 
 if (!defined('COOKIE_NAME')) {

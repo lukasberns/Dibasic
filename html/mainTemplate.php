@@ -1,20 +1,20 @@
 {{= Dibasic.DPNavigation.widget() }}
 
-<?if(!$Dibasic->tableExists):?>
+<?php if(!$Dibasic->tableExists):?>
 
-	<?$Dibasic->addPlugin('CreateForm')?>
+	<?php$Dibasic->addPlugin('CreateForm')?>
 	
 	Table does not exist.
 	{{= Dibasic.DPCreateForm.widget() }}
 
-<?elseif($Dibasic->tableNeedsModifications):?>
+<?php elseif($Dibasic->tableNeedsModifications):?>
 
-	<?$Dibasic->addPlugin('AlterForm')?>
+	<?php$Dibasic->addPlugin('AlterForm')?>
 
 	Table needs modifications.
 	{{= Dibasic.DPAlterForm.widget() }}
 
-<?else:?>
+<?php else:?>
 
 	<div>
 	{{= Dibasic.DPAddForm.widget() }}
@@ -27,4 +27,4 @@
 	{{= Dibasic.dataRenderer.widget() }}
 	</div>
 
-<?endif;?>
+<?php endif;?>

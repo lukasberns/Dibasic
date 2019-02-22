@@ -132,7 +132,7 @@ $goto = isset($_GET['goto']) ? addslashes($_GET['goto']) : '../';
 							h2: h2
 						}, function(success) {
 							if (success) {
-								location.href = '<?=$goto?>';
+								location.href = '<?php echo $goto?>';
 								// redirect to originally requested page
 							}
 							else {

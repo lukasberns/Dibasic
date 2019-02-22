@@ -41,7 +41,7 @@ class DIFileUpload extends DI {
 		);
 	}
 	
-	public function processData(&$data) {
+	public function processData(&$data, $id=-1) {
 		$value = &$data[$this->columnName];
 		$info = finish_upload($value, self::$upload_dir, null, "{$this->Dibasic->tableName}/{$this->columnName}");
 		$value = $info['url'];

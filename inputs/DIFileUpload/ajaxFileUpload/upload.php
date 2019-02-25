@@ -17,10 +17,7 @@ $sessionid = $_GET['sid'];
 $sessionid = preg_replace('/[^a-zA-Z0-9]/', '', $sessionid);
 
 // don't change the next few lines unless you have a very good reason to.
-$post_data_file = "$tmp_dir/$sessionid"."_postdata";
-$monitor_file   = "$tmp_dir/$sessionid"."_flength";
 $error_file     = "$tmp_dir/$sessionid"."_err";
-$signal_file    = "$tmp_dir/$sessionid"."_signal";
 $qstring_file   = "$tmp_dir/$sessionid"."_qstring";
 
 function bye_bye($message, $internal) {

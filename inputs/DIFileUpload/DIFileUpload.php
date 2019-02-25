@@ -30,7 +30,7 @@ class DIFileUpload extends DI {
 		}
 		self::$upload_dir = dirname(CONFIG_UPLOAD_DIR.'/.'); // remove trailing slash
 		
-		self::$upload_cgi = "$urlDir/upload.cgi";
+		self::$upload_cgi = "$urlDir/upload.php";
 		self::$fileprogress_php = "$urlDir/fileprogress.php";
 	}
 	

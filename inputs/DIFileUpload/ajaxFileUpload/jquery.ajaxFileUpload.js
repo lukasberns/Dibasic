@@ -136,8 +136,8 @@ var ajaxFileUploader = function(el, options) {
 	this.previousData = '';
 	this.decay = 1; 				// see around line ### (209)
 	this.originalDecay = 1.2;		// call server not so many times when progress doesn't change for a while (e.g. big file)
-	this.frequency = 0.5;			// in seconds
-	this.maxWait = 5;				// maximum seconds to wait (even if very big file)
+	this.frequency = 1000;			// in seconds
+	//this.maxWait = 5;				// maximum seconds to wait (even if very big file)
 	
 	this.oldFile = ''; // a file that’s already stored on the server
 	this.deleteOld = false; // if there’s no new file but the old one should be deleted
@@ -182,7 +182,6 @@ ajaxFileUploader.prototype = {
 			.attr({
 				enctype: 'multipart/form-data',
 				method: 'post',
-				target: this.id+'_iframe',
 				id: this.id+'_form'
 			})
 			.hide()
@@ -206,7 +205,93 @@ ajaxFileUploader.prototype = {
 				}
 				
 				if (self.valid) {
-					return true;
+					var started = new Date;
+					if (self.xhr) {
+						self.xhr.abort();
+					}
+					self.xhr = new XMLHttpRequest();
+					
+					self.xhr.upload.addEventListener("progress", function(e){
+						if (self.stopped) {
+							self.xhr.abort();
+							return;
+						}
+				
+						if (self.hiddenInput.val() == "stopUploading") {
+							// you can set the value of the hidden input
+							// to "stopUploading" to stop uploading
+							self.fileNameText.val("stopped");
+							self.stop();
+							return;
+						}
+						
+						if (e.lengthComputable) {
+							console.log("XHR progress: "+e.loaded+" / "+e.total);
+							
+							var curTime = new Date;
+							var elapsedTime = (curTime-started)/1000.;
+							var percentDone = Math.round(e.loaded/e.total*100.);
+							
+							var remTime = elapsedTime/(e.loaded+1.) * (e.total - e.loaded);
+							if (isNaN(remTime))
+								remTime = data.remainingTime + "s";
+							else if (remTime > 60*120) // if longer than 2 hours
+								remTime = Math.round(remTime / 3600) + "h";
+							else if (remTime > 120) // if longer than 2 min
+								remTime = Math.round(remTime / 60) + "min";
+							else
+								remTime = Math.round(remTime) + "s";
+
+							self.progressBar.css({width: percentDone+'%'});
+						}
+						self.hiddenInput.val('uploading');
+					}, false);
+					
+					self.xhr.onerror = function(e) {
+						console.log("XHR failed with error: ");
+						console.log(e);
+						self.stop();
+						self.changeToErrorStatus('XHR error');
+					};
+					
+					self.xhr.onload = function() {
+						console.log("XHR completed. Status: "+self.xhr.status);
+						if (self.xhr.status == 200) {
+							self.stop();
+							self.uploadedSid = self.sid;
+							self.uploadedFileName = self.uploadingFileName;
+							self.uploadingFileName = '';
+							
+							var newFileInput = self.emptyFileInput.clone();
+							self.fileInput.replaceWith(newFileInput);
+							self.fileInput = newFileInput;
+							self.bindFileInputEvents();
+							
+							self.setValue();
+							self.changeToFinishedStatus();
+						}
+						else {
+							console.log("XHR failed with status code: "+self.xhr.status);
+							console.log("Response was: "+self.xhr.response);
+							var resp = self.xhr.response; // cache response before self.stop()
+							self.stop();
+							self.uploadedSid = '';
+							self.uploadedFileName = '';
+							self.uploadingFileName = '';
+							
+							var newFileInput = self.emptyFileInput.clone();
+							self.fileInput.replaceWith(newFileInput);
+							self.fileInput = newFileInput;
+							self.bindFileInputEvents();
+							
+							self.setValue(); // clear "uplaoding" status. if old file existed, revert to old
+							self.changeToErrorStatus(resp);
+						}
+					};
+					
+					self.xhr.open("post", self.form.prop('action'));
+					self.xhr.send(new FormData(self.form[0]));
+					return false;
 				}
 				else {
 					self.changeToNoFileStatus();
@@ -219,6 +304,10 @@ ajaxFileUploader.prototype = {
 
 	initWrapperAndContents: function() {
 		var self = this;
+		
+		var inputName = $(this.orgEl).attr('name');
+		var clas = $(this.orgEl).attr("class");
+		
 		this.emptyFileInput = $('<input/>', {
 				type: 'file',
 				name: inputName+'_file',
@@ -237,9 +326,6 @@ ajaxFileUploader.prototype = {
 //			*/
 			self.start();
 		};
-		
-		var inputName = $(this.orgEl).attr('name');
-		var clas = $(this.orgEl).attr("class");
 
 		// the wrapper to contain everything
 		// all ajaxFileUpload('...') methods should be called on this element
@@ -521,6 +607,30 @@ ajaxFileUploader.prototype = {
 		}
 	},
 
+	changeToErrorStatus: function(errorMessage) {
+		var self = this;
+		
+		this.wrapper.children().hide();
+		this.segmentedControls.show().children().hide();
+		
+		this.fileNameText.val('Error: '+errorMessage);
+		this.progressContainer.removeClass('uploading').show();
+		this.progressBar.fadeOut();
+		
+		this.uploadButton.show().find(':button').removeClass('left').val('Upload');
+		this.removeButton.hide();
+		
+		if (this.oldFile && !this.deleteOld) {
+			this.revertButton.show();
+		}
+		
+		this.fileInput.unbind('click.ajaxFileUpload');
+		
+		if ($.fancybox && $.fancybox.resize) {
+			$.fancybox.resize();
+		}
+	},
+
 	changeToFinishedStatus: function() {
 		var self = this;
 		var fileName = this.uploadedFileName || (this.deleteOld ? '' : this.oldFile);
@@ -576,164 +686,19 @@ ajaxFileUploader.prototype = {
 			this.uploadingFileName = filename;
 			
 			this.changeToUploadingStatus();
-			this.getStatus();
 		}
 	},
-
-	getStatus: function() {
-		var self = this;
-		$.ajax({
-			cache: false,
-			data: {sid: this.sid, json: true},
-			dataType: "json",
-			type: "GET",
-			url: this.options.fileprogress_php,
-			error: function(XMLHttpRequest, textStatus, errorThrown) {
-				if (self.errorCount > 5) {
-					if (confirm("Upload failed - "+textStatus+" - "+errorThrown + "\nTry again?")) {
-						self.start();
-					}
-					else {
-						self.stop();
-					}
-					return;
-				}
-
-				if (typeof(window.console) != "undefined") {
-					window.console.log("Upload failed: "+textStatus+" - "+errorThrown + "\nWill stop after " + (6-self.errorCount) + " more errors");
-				}
-				
-				if (self.options.debug) {
-					var table = $('<table/>');
-					for (var key in self) {
-						table.append('<tr><td>'+key+':</td><td>'+self[key]+'</td></tr>');
-					}
-					self.statusDiv.html(table);
-				}
-
-				self.timer = setTimeout(function() {
-					self.getStatus();
-				}, self.decay * self.frequency * 1000);
-				self.errorCount++;
-			},
-			success: function(data, textStatus) {
-				self.lastResponse = new Date().getTime();
-
-				if (self.options.debug) {
-					var table = $('<table/>');
-					var key;
-					for (key in data) {
-						table.append('<tr><td>'+key+':</td><td>'+data[key]+'</td></tr>');
-					}
-					table.append('<tr><td>---</td><td>---</td></tr>');
-					for (key in self) {
-						table.append('<tr><td>'+key+':</td><td>'+self[key]+'</td></tr>');
-					}
-					self.statusDiv.html(table);
-				}
-				
-				if (self.stopped) {
-					return;
-				}
-				
-				if (self.hiddenInput.val() == "stopUploading") {
-					// you can set the value of the hidden input
-					// to "stopUploading" to stop uploading
-					self.fileNameText.val("stopped");
-					self.stop();
-					return;
-				}
-
-				if (parseInt(data.percentDone, 10) >= 100 && data.currentSize == data.totalSize) {
-					// if uploaded 100%
-					
-					self.stop();
-					self.uploadedSid = self.sid;
-					self.uploadedFileName = self.uploadingFileName;
-					self.uploadingFileName = '';
-					
-					var newFileInput = self.emptyFileInput.clone();
-					self.fileInput.replaceWith(newFileInput);
-					self.fileInput = newFileInput;
-					self.bindFileInputEvents();
-					
-					self.setValue();
-					self.changeToFinishedStatus();
-					return;
-				}
-				else if (data.percentDone && data.percentDone != self.previousData.percentDone) {
-					// if uploaded percentage changed
-					self.decay = 1; // reset decay
-					self.noDataCount = 0;
-					// var w = self.progress.outerWidth();
-					//  self.progress.animate({backgroundPosition: (w*parseInt(data.percentDone)/100)+"px top"});
-				}
-				else if (data.percentDone == self.previousData.percentDone) {
-					// if uploaded percentage hasn't changed
-					// call server less often,
-					// because it could be a big file
-					if (self.decay * self.frequency < self.maxWait) {
-						self.decay *= self.originalDecay;
-					}
-				}
-
-				remTime = parseInt(data.remainingTime, 10);
-				if (isNaN(remTime))
-					remTime = data.remainingTime + "s";
-				else if (remTime > 60*120) // if longer than 2 hours
-					remTime = Math.round(remTime / 3600) + "h";
-				else if (remTime > 120) // if longer than 2 min
-					remTime = Math.round(remTime / 60) + "min";
-				else
-					remTime = Math.round(remTime) + "s";
-
-				if (self.noDataCount > self.options.restartAfter) {
-					// restart if it doesn't seem to work
-					if (typeof(window.console) != "undefined") {
-						window.console.log("Restarted upload because it didn't seem to be working");
-					}
-					self.start();
-					return;
-				}
-
-//				self.progress.val(data.percentDone + "%, " + remTime + ", " + data.speed);
-				self.progressBar.animate({width: data.percentDone+'%'});
-				if (!data.currentSize || data.currentSize == '0') {
-					self.noDataCount++;
-				}
-				else {
-					self.noDataCount = 0;
-				}
-				self.count++;
-				
-				self.hiddenInput.val('uploading');
-				self.previousData = data;
-				
-				self.timer = setTimeout(function() {
-					self.getStatus();
-				}, self.decay * self.frequency * 1000);
-			}
-		});
-
-		// sometimes it happens that the requested file is responsed only after one file has completed uploading.
-		// prevent this by the following line
-		// = refetch data if no data was received in 5 seconds
-
-		setTimeout(function() {
-			if (!self.stopped && self.lastResponse + 5000 < new Date().getTime()) {
-				self.getStatus();
-			}
-		}, 5000);
-	},
-
+	
 	stop: function() {
 		if (this.stopped) return;
 		
-		this.iframe.attr("src", "about:blank");
+		if (this.xhr) {
+			this.xhr.abort();
+			this.xhr = null;
+		}
 		this.fileNameText.val("");
 		
 		this.stopped = true;
-		clearTimeout(this.timer);
 	},
 	
 	setValue: function(val) {

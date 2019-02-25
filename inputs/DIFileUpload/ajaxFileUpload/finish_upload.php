@@ -14,7 +14,7 @@ function finish_upload($data, $upload_dir, array $accept=null, $upload_path=null
 	$DOCUMENT_ROOT = preg_replace('|'.preg_quote($_SERVER['SCRIPT_NAME']).'$|', '', $_SERVER['SCRIPT_FILENAME']);
 	
 	$data = explode('|', $data);
-	$sid = ereg_replace('[^a-zA-Z0-9]', '', $data[0]);
+	$sid = preg_replace('/[^a-zA-Z0-9]/', '', $data[0]);
 	$oldvalue = $data[1];
 	
 	if (!$accept) {

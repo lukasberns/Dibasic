@@ -110,7 +110,7 @@ Class("DPDBInterface", DP, {
 						delete self._waitingFor[id];
 					}
 					self._fire(missingData);
-				});
+				}).fail(function() { alert("Error"); });
 			}
 		});
 	},
@@ -161,7 +161,7 @@ Class("DPDBInterface", DP, {
 				callback(newData);
 			}
 			self._fire(newData);
-		});
+		}).fail(function() { alert("Error"); });
 	},
 	
 	update: function(data, callback, errorCallback) {
@@ -196,7 +196,7 @@ Class("DPDBInterface", DP, {
 				callback(data);
 			}
 			self._fire(data);
-		});
+		}).fail(function() { alert("Error"); });
 	},
 	
 	remove: function(ids, callback, errorCallback) {
@@ -235,7 +235,7 @@ Class("DPDBInterface", DP, {
 				callback(newData);
 			}
 			self._fire(newData);
-		});
+		}).fail(function() { alert("Error"); });
 	},
 	
 	refetchData: function(/* (id || ids || from, to) [, callback] */) {
